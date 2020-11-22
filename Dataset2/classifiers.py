@@ -7,7 +7,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.calibration import CalibratedClassifierCV
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 """
 Classifiers Library
@@ -91,12 +91,14 @@ class AdaCost:
     Requires:
         X_train: Training features. Size N x D
         y_train: Training labels. Size N x 1
-        cost: cost used to update weight via the adjustment function
+        cost: cost used to update weight via te adjustment function
 
     """
     
-    def __init__(self, x=None,y=None, n_iterations = 100):
+    def __init__(self, x=None,y=None, cost = None, n_iterations = 100):
         self.number_iterations = n_iterations
+        if x != None and y != None and cost != None:
+            self.fit(x,y,cost)
         
     def fit(self,X_train,y_train, cost):
         # Initialize weights
@@ -141,6 +143,7 @@ class AdaCost:
             #print(weights)
             
             #input()
+
         
     def predict(self,X_test):
         model_preds = np.array([model.predict(X_test) for model in self.weak_learners])
