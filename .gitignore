@@ -1,6 +1,7 @@
 *.log
 *.aux
 *.gz
-*.DS_store 
+*.DS_store
+*.pyc 
 Dataset2/.ipynb_checkpoints/*
 Dataset1/Python/.ipynb_checkpoints/*
