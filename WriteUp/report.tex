@@ -3,10 +3,23 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
+%\usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+
+%\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{arevmath}     % For math symbols
+
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+\SetKwInput{KwInput}{Input}                % Set the Input
+\SetKwInput{KwOutput}{Output}              % set the Output
+
+
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -75,11 +88,82 @@ Blabla
 \subsection{AdaBoost}
 Blabla
 
+\begin{algorithm}
+  
+  \KwInput{Training set $D = \{x_i, y_i\}, i=1,\dots,N;$ and $y_i \in \{ -1,+1\}$; $T:$ Number of iterations; $I:$ Weak learner} 
+  \KwOutput{Boosted Classifier: $H(x)=sign\left( \sum^T_{t=1}\alpha_ih_t(x)\right)$ where $h_t, \alpha_t$ are the induced classifiers and their significance, respectively}
+  %\KwData{Testing set $x$}
+  $W_1(i) \leftarrow 1/N$ for $i=1,\dots,N$ %\tcp*{this is a comment}
+  
+  \tcc{Create a weak learner in each iteration}
+  \For{t=1 to T}
+    {
+        $h_t \leftarrow I(D,W)$
+        
+        $\epsilon_t \leftarrow \sum^N_{i=1}W_t(i)[h_t(x_i)\neq y_i]$
+        
+        \If{$\epsilon_t > 0.5$}
+        		{
+		
+		$T \leftarrow t-1$
+		
+		\bf{return}
+		}
+		
+	$\alpha_t = \frac{1}{2}\ln \left( \frac{1-\epsilon_t}{\epsilon_t} \right)$
+	
+	\tcc{Update Weights}
+	  
+	 $W_{t+1}(i) = W_t(i)\dot e^{(-\alpha_th_t(x_i)y_i)}$ for $i=1,\dots,N$
+	 
+	 Normalize $W_{t+1}$ such that $\sum^N_{i=1}W_{t+1}(i)=1$
+	  
+    }
+
+
+\caption{AdaBoost Algorithm}
+\end{algorithm}
+
 \subsection{AdaCost}
 Blabla
 
 \subsection{Boosting SVM}
-Blabla
+
+\begin{algorithm}
+  
+ \KwInput{Training set $D = \{x_i, y_i\}, i=1,\dots,N;$ and $y_i \in \{ -1,+1\}$; $T:$ Maximum number of iterations; The initial $\sigma=\sigma_{ini}, \sigma_{min}, \sigma_{step}$} 
+\KwOutput{Boosted Classifier: $H(x)=sign\left( \sum^T_{t=1}\alpha_ih_t(x)\right)$ where $h_t, \alpha_t$ are the induced classifiers and their significance, respectively}
+  %\KwData{Testing set $x$}
+  $W_1(i) \leftarrow 1/N$ for $i=1,\dots,N$ %\tcp*{this is a comment}
+  
+  \tcc{Create a weak learner in each iteration}
+  \While{$\sigma > \sigma_{min}$ and $t<T$}
+    {
+        $t \leftarrow t+1$
+        
+        $h_t \leftarrow RBFSVM(D,W,\sigma)$ \tcp*{Train RBFSVM}
+        
+        $\epsilon_t \leftarrow \sum^N_{i=1}W_t(i)[h_t(x_i)\neq y_i]$
+        
+        \If{$\epsilon_t > 0.5$}
+        		{
+		
+		$\sigma \leftarrow \sigma - \sigma_{step}$
+		
+		}
+	\Else
+	{
+	$\alpha_t = \frac{1}{2}\ln \left( \frac{1-\epsilon_t}{\epsilon_t} \right)$
+	
+	\tcc{Update Weights}
+	  
+	 $W_{t+1}(i) = W_t(i)\dot e^{(-\alpha_th_t(x_i)y_i)}$ for $i=1,\dots,N$
+	 
+	 Normalize $W_{t+1}$ such that $\sum^N_{i=1}W_{t+1}(i)=1$
+	 }
+    }
+\caption{Boosted SVM Algorithm}
+\end{algorithm}
 
 \subsection{AdaMEC}
 Blabla
