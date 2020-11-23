@@ -21,6 +21,72 @@ This library includes 5 different classifiers:
 
 
 """ Custom Bagging implementation"""
+class Bagging_classifier:
+    def __init__(self, type_classifier, x=None, y=None, n_iterations = 20, ratio=0.1):
+        
+        """
+        type_classifier: DecisionTree, KNN, SVM, GaussianNB
+        """
+        self.number_iterations = n_iterations
+        self.type_classifier = type_classifier 
+        
+        self.ratio = ratio #Ratio Bootstrapped dataset/ original dataset
+        
+                
+    def fit(self,X_train,y_train):
+        
+        dataset_train = np.concatenate((X_train.to_numpy(), y_train),axis = 1)
+        N = np.shape(dataset_train)[0]
+        
+        # There will be as many classifier models as iterations
+        self.classifier_models = np.zeros(shape=self.number_iterations, dtype=object)
+        
+        for classifier_iteration in range(self.number_iterations):
+    
+            dataset_train_undersampled = dataset_train[random.sample(range(1,N),int(self.ratio*N)), :]
+
+            X_train_undersampled = dataset_train_undersampled[:,0:59]
+            y_train_undersampled = dataset_train_undersampled[:,59].astype(int)
+
+
+            ### Train different algorithms
+
+            # Decision tree
+            if self.type_classifier == "DecisionTree": 
+                classifier = DecisionTreeClassifier(max_depth=1, max_leaf_nodes=2)
+                classifier_model = classifier.fit(X_train_undersampled, y_train_undersampled)
+
+
+            # K-NN
+            elif self.type_classifier == "KNN":
+                classifier = KNeighborsClassifier(n_neighbors=3)
+                classifier_model = classifier.fit(X_train_undersampled, y_train_undersampled)
+
+        
+            # SVM
+            elif self.type_classifier == "SVM":
+                classifier = make_pipeline(StandardScaler(), SVC(gamma='auto'))
+                classifier_model = classifier.fit(X_train_undersampled, y_train_undersampled)
+
+            # Gaussian Naive Bayes    
+            elif self.type_classifier == "GaussianNB":
+                classifier = GaussianNB()
+                classifier_model = classifier.fit(X_train_undersampled, y_train_undersampled) 
+            else:
+                print("Wrong classifier selection")
+                return
+                
+            self.classifier_models[classifier_iteration] = classifier_model
+        
+        return
+    
+    
+    def predict(self,X_test):
+        
+        model_preds = np.array([model.predict(X_test) for model in self.classifier_models])
+        y_test_pred = np.sign(np.mean(model_preds,axis = 0))
+        return y_test_pred.astype(int)
+            
 
 """ Custom AdaBoost Classifier implementation"""
 class AdaboostClassifier:
