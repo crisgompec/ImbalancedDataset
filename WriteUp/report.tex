@@ -188,16 +188,13 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 Ensemble of classifiers are known to improve the performance of single classifiers in imbalanced datasets [A Review on Ensembles for the Class Imbalance] by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
 
 \subsection{Bagging}
-Blabla
+Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (espcially associated to decision trees). 
 
 \break
 \subsection{AdaBoost}
-Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous model. In particular, the AdaBoost algorithm stands out in the field of ensemble learning [Cost-sensitive boosting algorithms: Do we really need them?]. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. 
-
-This custom implementation uses single decision trees with 2 leaf nodes. It is given the number of maximum iterations (weak learners) that will be fitted, and a dataset $D$ formed by N training samples, each constituted by a feature vector $\boldsymbol{x}_i$ and an associated binary label $y_i$. For each iteration, a weak classifier is created using the weighted training samples. For the first iteration, we allocate the same weight for all the samples ($1/N$). Once the decision tree has been created, we predict the class of the training samples and compute the weighted misclassification error $\epsilon_t$. Then, the significance $\alpha_t$ is calculated based on the error. Finally, the weights of each training samples are updated depending on the significance and whether the sample was correctly classified or not. Note that the weights are increased by $e^{\alpha}$ if the sample is misclassified or decreased by $e^{-\alpha}$ if correctly classified, with  $\alpha_t \in [0,1]$ because $\epsilon_t \in [0,0.5]$. The algorithm is fully detailed below.
+Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in [\textcolor{red}{The strength of weak learnability}]that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning [\textcolor{red}{Cost-sensitive boosting algorithms: Do we really need them?}] and has been appointed as one of the top ten data mining algorithms [\textcolor{red}{Top 10 algorithms in data mining}]. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is fully detailed below.
 
 \begin{algorithm}
-  
   \KwInput{Training set $D = \{x_i, y_i\}, i=1,\dots,N;$ and $y_i \in \{ -1,+1\}$; $T:$ Number of iterations; $I:$ Weak learner} 
   \KwOutput{Boosted Classifier: $H(x)=sign\left( \sum^T_{t=1}\alpha_ih_t(x)\right)$ where $h_t, \alpha_t$ are the induced classifiers and their significance, respectively}
   %\KwData{Testing set $x$}
@@ -227,15 +224,13 @@ This custom implementation uses single decision trees with 2 leaf nodes. It is g
 	 Normalize $W_{t+1}$ such that $\sum^N_{i=1}W_{t+1}(i)=1$
 	  
     }
-
-
 \caption{AdaBoost Algorithm}
 \end{algorithm}
 
+% Maybe we need to delete or reduce this paragraph
+This custom implementation uses single decision trees with 2 leaf nodes. It is given the number of maximum iterations (weak learners) that will be fitted, and a dataset $D$ formed by N training samples, each constituted by a feature vector $\boldsymbol{x}_i$ and an associated binary label $y_i$. For each iteration, a weak classifier is created using the weighted training samples. For the first iteration, we allocate the same weight for all the samples ($1/N$). Once the decision tree has been created, we predict the class of the training samples and compute the weighted misclassification error $\epsilon_t$. Then, the significance $\alpha_t$ is calculated based on that error. Finally, the weights of each training samples are updated depending on the significance and whether the sample was correctly classified or not. Note that the weights are increased by $e^{\alpha}$ if the sample is misclassified or decreased by $e^{-\alpha}$ if correctly classified, with  $\alpha_t \in [0,1]$ because $\epsilon_t \in [0,0.5]$. 
 
----- Mathematical implications ----
-
-
+AdaBoost uses the whole training samples to create each weak learner serially --in contrast to \textit{Bagging}, where \textit{bootstrap aggregating} is used to construct ensembles-- giving more focus to challenging instances and turn the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibitily of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason behind why weak learners with low variance but high bias --such as decision trees-- are well adapted for boosting. 
 
 
 \subsection{AdaCost}
