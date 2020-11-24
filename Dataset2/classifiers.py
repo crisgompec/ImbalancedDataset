@@ -9,6 +9,15 @@ from sklearn.svm import SVC
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.model_selection import train_test_split
 
+
+import pandas as pd
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+import random
+
 """
 Classifiers Library
 This library includes 5 different classifiers:
@@ -35,8 +44,9 @@ class Bagging_classifier:
                 
     def fit(self,X_train,y_train):
         
-        dataset_train = np.concatenate((X_train.to_numpy(), y_train),axis = 1)
-        N = np.shape(dataset_train)[0]
+        N = np.shape(X_train)[0]
+        
+        dataset_train = np.concatenate((X_train, y_train.reshape((N,1))),axis = 1)
         
         # There will be as many classifier models as iterations
         self.classifier_models = np.zeros(shape=self.number_iterations, dtype=object)
@@ -45,8 +55,8 @@ class Bagging_classifier:
     
             dataset_train_undersampled = dataset_train[random.sample(range(1,N),int(self.ratio*N)), :]
 
-            X_train_undersampled = dataset_train_undersampled[:,0:59]
-            y_train_undersampled = dataset_train_undersampled[:,59].astype(int)
+            X_train_undersampled = dataset_train_undersampled[:,0:58]
+            y_train_undersampled = dataset_train_undersampled[:,58].astype(int)
 
 
             ### Train different algorithms
@@ -84,7 +94,8 @@ class Bagging_classifier:
     def predict(self,X_test):
         
         model_preds = np.array([model.predict(X_test) for model in self.classifier_models])
-        y_test_pred = np.sign(np.mean(model_preds,axis = 0))
+        y_test_pred = np.ceil(np.mean(model_preds,axis = 0))
+        y_test_pred = np.where(y_test_pred < 0.5, -1, 1)
         return y_test_pred.astype(int)
             
 
