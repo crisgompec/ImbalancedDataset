@@ -68,6 +68,8 @@ imbalance
 Imbalanced datasets significantly compromise the performance of many traditional learning algorithms. The disparity of classes in the training dataset may lead the algorithm to bias the classification towards the class with more instances, or even to ignore the minority class altogether. Therefore, it is vital to find efficient ways of dealing with data imbalances.
 
 	The overall goal of our project is to provide an overview of the state-of-the-art approaches to solve the issues introduced by imbalanced datasets. Including, a performance comparison of the various techniques. We also aim to implement an efficient scheme that is able to deal with highly complex and imbalanced datasets.
+	
+	\textcolor{red}{TO-DO}: INCLUDE HERE THAT WE WILL DO RESAMPLING, COST-SENSTIVE, ENSEMBLED METHODS AND HYBRID ALGORITMS, AND EXPLAIN WHY ENSEMBLED METHODS MAY WORK BETTER THAT TRADITIONAL ALGORITHMS. 
 
 
 	\subsection{Methodology}
@@ -95,7 +97,7 @@ Imbalanced datasets significantly compromise the performance of many traditional
 				\end{pmatrix}
 			\end{equation*} and where the minority class only accounts for 15\% of the samples. This simple dataset is especially useful to analyze the imbalance-compensating techniques from a mathematical perspective. Not only do we study the concepts learnt in class at a theoretical level, but we also use plugin machine learning models to illustrate how they affect density distributions.
 
-		Secondly, we target a more complex dataset.  TODO
+		Secondly, we target a more complex dataset.  \textcolor{red}{TO-DO}
 
 		The performance of the classification will be evaluated using the $F_1$ score $\in [0, 1]$, where the best possible score is 1. This metric is computed as
 			\begin{equation*}
@@ -261,7 +263,7 @@ This is called Minimum Expected Cost rule and it assumes that the wighted votes 
 
 
 \subsection{Boosting SVM}
-One of the practical concerns about AdaBoost is the accuracy/diversity dilemma [A study of adaboost with SVM based on weak learners], which means that when the weak learners are actually strong classifiers and they do not disagree too much on their vote, the performance of boosting is weakened. Support vector machines (SVM) are known to be strong learners that minimize structural risk [12]. 
+One of the practical concerns about AdaBoost is the accuracy/diversity dilemma [A study of adaboost with SVM based on weak learners], which means that when the weak learners are actually strong classifiers and they do not disagree too much on their vote, the performance of boosting is weakened. Support vector machines (SVM) are known to be strong learners that minimize structural risk [12], so in a first glance they should not work well when ensembled. However, the literature [\textcolor{red}{Boosting Support Vector Machines Successfully}][AStudyofAdaBoostwithSVMBasedWeak Learners][Boosting Support Vector Machines] suggests that if properly weakened, Boosted SVM can exceed the classification performance of traditional SVMs or AdaBoost on imbalanced datasets, and gain control over the accuracy/diversity issue. To do that, we have used radial basis function kernel (RBF), which uses the Gaussian width $\sigma$ to map the features on a high dimensional feature space. The performance of RBFSVM can be conveniently controlled by adjusting $\sigma$. Large values of sigma will lead to very weak classifiers. The full algorithm description is detailed below:
 
 \begin{algorithm}
   
@@ -299,12 +301,106 @@ One of the practical concerns about AdaBoost is the accuracy/diversity dilemma [
 \caption{Boosted SVM Algorithm}
 \end{algorithm}
 
+The main disadvantage of SVM is that the running time to train the model does not scale well with the size of the training set [\textcolor{red}{Elkin}]. Our training set has more than 30,000 samples so the training would take a significant amount of time. Therefore, a preprocessing step was applied to the training data, whose dimensionality is reduced using PCA and ultimately under-sampled to speed-up the training process. 
+
+[\textcolor{red}{TO-DO}: Add comparison with SVM somehow
+
 \subsection{XGBoost}
 Blabla
 
 \section{Results and Discussion}
-Finally, we have combined them with downsampling to explore the effectiveness of hybrid algorithms.
-Blabla 
+This section discusses the performance of each classifier in terms of imbalance impact, training error and diversity.
+
+\subsection{Performance Results}
+
+The best performance results of each methodology are shown in the table below. This table shows the metrics of the best F-1 score so it is possible to compare the algorithms from multiple perspectives.
+
+\begin{table}[htbp]
+\caption{Best Classification Performances}
+
+\begin{center}
+
+\begin{tabular}{|c|c|c|c|c|c|c|}
+
+\hline
+\textbf{Type of} & & \multicolumn{5}{|c|}{\textbf{Scores}} \\
+\cline{3-7} 
+
+\textbf{Method} & \textbf{Classifier} &\textbf{\textit{F-1}}& \textbf{\textit{Acc.}}&\textbf{\textit{Prec.}}&\textbf{\textit{Rec.}}&\textbf{\textit{AUC}}\\
+\hline
+
+& AdaBoost$^*$ & & & & &  \\
+\cline{2-7} 
+
+& Bagging$^*$ & & & & &  \\
+\cline{2-7} 
+
+Ensemble & R. Forest & & & & &  \\
+\cline{2-7} 
+
+& BoostSVM$^*$ & & & & &  \\
+\cline{2-7} 
+
+& XGBoost & & & & &  \\
+\hline
+
+Cost & AdaCost$^*$ & & & & &  \\
+\cline{2-7} 
+
+Sensitive& AdaMEC & & & & &  \\
+\hline
+
+& AdaBoost$^*$ & & & & &  \\
+\cline{2-7} 
+
+& Bagging$^*$ & & & & &  \\
+\cline{2-7} 
+
+Hybrid & R. Forest & & & & &  \\
+\cline{2-7} 
+
+(using under-& BoostSVM$^*$ & & & & &  \\
+\cline{2-7} 
+
+sampling)& XGBoost & & & & &  \\
+\cline{2-7} 
+
+ & AdaCost$^*$ & & & & &  \\
+\cline{2-7} 
+
+& AdaMEC & & & & &  \\
+\hline
+
+\multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}
+
+\end{tabular}
+
+\label{tab1}
+\end{center}
+\end{table}
+
+-- Comments --
+
+\subsection{Impact of Imbalance Data on Classification}
+
+Chart of F1-score vs. Imabalance
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=0.35]{pictures/Imbalance_Comparison1.png}}
+\caption{Impact of imbalanced training set on classification.}
+\label{ImbalanceComparison}
+\end{figure}
+
+-- Comments --
+
+\subsection{Overfitting Analysis}
+
+Chart of risk (test and training errors) vs. Complexity
+
+\subsection{Diversity Analysis}
+
+Chart of Accuracy vs. Diversity
+% Mirar Fig. 3 de esta paper: http://users.cecs.anu.edu.au/~wanglei/My_papers/AdaBoost_SVM_IJCNN_2005.pdf
 
 \section{Conclusions}
 Blabla 
@@ -312,6 +408,19 @@ Blabla
 \newpage
 a
 \newpage
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Abbreviations and Acronyms}\label{AA}
 Define abbreviations and acronyms the first time they are used in the text, 
