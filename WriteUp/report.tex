@@ -11,6 +11,7 @@
 %\usepackage{algorithm}git add
 \usepackage{algpseudocode}
 \usepackage{arevmath}     % For math symbols
+\usepackage{bbm}
 
 \usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
@@ -31,7 +32,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Analysis of Imbalanced Datasets\\
+\title{Imbalanced Dataset Techniques to improve Classification of Uneven Class Distributions\\
 }
 
 \author{\IEEEauthorblockN{Miguel Jiménez Aparicio}
@@ -188,9 +189,13 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 Ensemble of classifiers are known to improve the performance of single classifiers in imbalanced datasets [A Review on Ensembles for the Class Imbalance] by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
 
 \subsection{Bagging}
-Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (espcially associated to decision trees). 
 
-\break
+Intro:
+As we have stated, in recent years, ensemble of classifiers have arisen as a possible solution to the class imbalance problem attracting great interest among researchers [45], [47], [50], [62].
+%https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5978225
+
+Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
+
 \subsection{AdaBoost}
 Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in [\textcolor{red}{The strength of weak learnability}]that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms [\textcolor{red}{Top 10 algorithms in data mining}]. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is fully detailed below.
 
@@ -230,22 +235,33 @@ Unlike bagging, boosting fits the weak learners in an adaptive way: a different 
 % Maybe we need to delete or reduce this paragraph
 This custom implementation uses single decision trees with 2 leaf nodes. It is given the number of maximum iterations (weak learners) that will be fitted, and a dataset $D$ formed by N training samples, each constituted by a feature vector $\boldsymbol{x}_i$ and an associated binary label $y_i$. For each iteration, a weak classifier is created using the weighted training samples. For the first iteration, we allocate the same weight for all the samples ($1/N$). Once the decision tree has been created, we predict the class of the training samples and compute the weighted misclassification error $\epsilon_t$. Then, the significance $\alpha_t$ is calculated based on that error. Finally, the weights of each training samples are updated depending on the significance and whether the sample was correctly classified or not. Note that the weights are increased by $e^{\alpha}$ if the sample is misclassified or decreased by $e^{-\alpha}$ if correctly classified, with  $\alpha_t \in [0,1]$ because $\epsilon_t \in [0,0.5]$. 
 
-AdaBoost uses the whole training samples to create each weak learner serially --in contrast to \textit{Bagging}, where \textit{bootstrap aggregating} is used to construct ensembles-- giving more focus to challenging instances and turn the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibility of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason behind why weak learners with low variance but high bias --such as decision trees-- are well adapted for boosting. Lastly the overall literature suggest AdaBoost algorithms are generally resistant to overfitting regardless the number of weak estimators we use, and there are very few cases reported to overfit the training data []. This fascinating issue is explained due to 1) as the iterations proceed the weak learners tend to have less significance and 2) similarly to SVM, ensemble classifiers maximize the margin which allows promoting good generalization [\textcolor{red}{The dynamics of AdaBoost: Cyclic behavior and convergence of margin}]. The impact of its complexity on overfitting is covered in the result section.
+AdaBoost uses the whole training samples to create each weak learner serially --in contrast to \textit{Bagging}, where \textit{bootstrap aggregating} is used to construct ensembles-- giving more focus to challenging instances and turn the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibility of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason behind why weak learners with low variance but high bias --such as decision trees-- are well adapted for boosting. Lastly the overall literature suggest AdaBoost algorithms are generally resistant to overfitting regardless the number of weak estimators we use, and there are very few cases reported to overfit the training data [[\textcolor{red}{Additive Logistic Regression: A Statistical View of Boosting}]. This fascinating issue is explained due to 1) as the iterations proceed the weak learners tend to have less significance and 2) similarly to SVM, ensemble classifiers maximize the margin which allows promoting good generalization [\textcolor{red}{The dynamics of AdaBoost: Cyclic behavior and convergence of margin}]. The impact of its complexity on overfitting is covered in the result section.
 
 \subsection{AdaCost}
 The AdaBoost algorithm is an accuracy-oriented algorithm. In other words, it assumes each class has an even distribution. In case the class distribution is uneven, the algorithm may incur in systematic biases toward the majority class. Therefore, several methods have been proposed to incorporate an asymmetric weight update and eliminate these biases. The literature suggest two different strategies to implement this changes [\textcolor{red}{Cost-sensitive boosting algorithms: Do we really need them?}]: 1) modify the model learnt from data or 2) modifying how the model is used to make a decision. AdaCost falls into the former category, and it aims at modifying the update of the weights based on a slight modification:
 
-Note that 
+$$ W_{t+1}(i) = W_t(i) \exp \left(-\alpha_t y_i h_t(x_i) \boxed{\phi(i)} \text{ } \right) \text{  with  } W_1(i) = \frac{c_i}{\sum_{i=1}^Nc_i}$$
+
+Where the new boxed term is called cost-adjustment function. We use this function to allocate different penalizations across different classes. This function is left for design since the literature suggest more than one alternatives. In this project we used the function suggested in [\textcolor{red}{A Review on Ensembles for the Class Imbalance}]: 
+
+$$\phi(i) = 0.5C_i \left( \mathbbm{1}\{ h_t(\boldsymbol x)=1\} -  \mathbbm{1}\{ h_t(\boldsymbol x)=-1\} \right)+0.5$$
+
+Where $C_i$ is a hyper-parameter that establishes the misclassification cost of the sample $i$, which ultimately depends upon the class of that sample. This cost-adjustment function yields to an upper bound cumulative misclassification cost equal to $d\prod_{t=1}^TZ_t$, where $d= \sum c_i$ and $Z_t$ is the sum of the costs calculated for $W_{t+1}$, i.e. the coefficient that we use to normalize the weights in AdaBoost [AdaCost]. Due to the fact that boosting minimizes $Z_t$, the significance ultimately needs to be updated in a different way[ Improved boost- ing algorithms using confidence-rated predictions.]:
+
+$$ \alpha = \frac{1}{2}\ln\frac{1+r}{1-r}\quad \text{where } r=\sum_iD(i)u_i, \quad u_i=y_i h(x_i)\phi(i)$$
+
+All in all, the AdaCost algorithm follows the same procedure as AdaBoost with changes in the significance and weight update rule in order to incorporate an asymmetric penalization cost. 
 
 \subsection{AdaMEC}
 The AdaMEC algorithm falls into the second category introduced in the previous part. The model is trained with the original AdaBoost, but modifies the decision rule by exploiting the bayesian decision theory:
 
 $$ H_{AdaMEC}(\boldsymbol x) = sign \left( \sum_{y \in \{-1,+1\}} c(y) \sum_{\tau: h_{\tau}(\boldsymbol x)=y} \alpha_{\tau} h_{\tau}(\boldsymbol x)\right)$$
 
-This is called Minimum Expected Cost rule and it assumes that the wighted votes of each weak learners are proportional to the class probabilities. We have incorporated this classifier in this study as it has been reported as one of the best cost-sensitive AdaBoost classifiers [Cost-sensitive boosting algorithms: Do we really need them?].
+This is called Minimum Expected Cost rule and it assumes that the wighted votes of each weak learners are proportional to the class probabilities. We have incorporated this classifier in this study as it has been reported as one of the best cost-sensitive AdaBoost classifiers [\textcolor{red}{Cost-sensitive boosting algorithms: Do we really need them?}].
 
 
 \subsection{Boosting SVM}
+One of the practical concerns about AdaBoost is the accuracy/diversity dilemma [A study of adaboost with SVM based on weak learners], which means that when the weak learners are actually strong classifiers and they do not disagree too much on their vote, the performance of boosting is weakened. Support vector machines (SVM) are known to be strong learners that minimize structural risk [12]. 
 
 \begin{algorithm}
   
