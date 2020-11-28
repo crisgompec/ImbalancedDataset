@@ -111,8 +111,9 @@ class AdaboostClassifier:
         # There will be as many weak learners as iterations
         self.weak_learners = np.zeros(shape=self.number_iterations, dtype=object)
         self.significance_vec = np.zeros(shape=self.number_iterations)
-        #error_vec = []
+        self.loss_vec = []
         #accuracy_vec = []
+        self.error_vec = []
         
         for iterations in range(self.number_iterations):
             current_weights = weights
@@ -135,7 +136,10 @@ class AdaboostClassifier:
                     correct_pred = correct_pred + 1 
 
             # Save error for plotting    
-            # error_vec.append(error)
+            self.error_vec.append(error)
+            
+            # Save loss
+            self.loss_vec.append(incorrect_pred)
 
             # Significance of the weak learner model is calculated and saved
             significance = 0.5*np.log((1-error)/error) 
@@ -150,6 +154,7 @@ class AdaboostClassifier:
 
             # Normalize weights
             weights /= weights.sum()
+           
         
     def predict(self,X_test):
         model_preds = np.array([model.predict(X_test) for model in self.weak_learners])
@@ -191,6 +196,9 @@ class AdaCost:
         self.weak_learners = np.zeros(shape=self.number_iterations, dtype=object)
         self.significance_vec = np.zeros(shape=self.number_iterations)
         
+        self.error_vec = []
+        self.loss_vec = []
+        
         for it in range(self.number_iterations):
             current_weights = weights
             
@@ -199,6 +207,26 @@ class AdaCost:
                                  max_leaf_nodes=2).fit(X_train, y_train, sample_weight=current_weights)
             self.weak_learners[it] = weak_learner_model
             weak_learner_pred = weak_learner_model.predict(X_train)
+            
+            
+            # Calculate error 
+            
+            error = 0
+            incorrect_pred = 0
+            correct_pred = 0
+            for item_index in range(number_samples):
+                if weak_learner_pred[item_index] != y_train[item_index]:
+                    incorrect_pred = incorrect_pred + 1
+                    error = error + current_weights[item_index]
+                else: 
+                    correct_pred = correct_pred + 1 
+
+            
+            # Save error for plotting    
+            self.error_vec.append(error)
+            
+            # Save loss
+            self.loss_vec.append(incorrect_pred)
             
             # Calculate r
             u = np.multiply(np.multiply(weak_learner_pred, y_train),beta)
@@ -260,6 +288,8 @@ class BoostingSVM:
         self.variance_explained = self.pca.explained_variance_ratio_
         X_train = self.pca.fit_transform(X_train)
         
+        self.error_vec = []
+        
         #for iterations in range(self.number_iterations):
         while sigma > self.sigma_min:
             print('Sigma: %.1f' % sigma)
@@ -276,6 +306,9 @@ class BoostingSVM:
             # Calculate error
             error = np.sum(current_weights[np.where(weak_learner_pred != y_train)[0]]) 
             self.error_debug.append(error)
+            
+            # Save error for plotting    
+            self.error_vec.append(error)
             
             if error > 0.5:
                 sigma = sigma - self.sigma_step
@@ -317,10 +350,12 @@ class AdaMEC:
         #Train an AdaBoost ensemble
         AdaBoostUncal = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), n_estimators= self.number_iterations)
         AdaBoostUncal = AdaBoostUncal.fit(X_train, y_train)
-	
+
         #Now calibrate the ensemble on the data reserved for calibration
         self.AdaBoostCal = CalibratedClassifierCV(AdaBoostUncal, cv="prefit", method='sigmoid')
         self.AdaBoostCal.fit(X_cal, y_cal)
+        
+#         self.error_vec = self.estimator_errors_
 
         return self.AdaBoostCal
 
