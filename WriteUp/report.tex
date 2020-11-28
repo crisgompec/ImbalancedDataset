@@ -97,7 +97,7 @@ Imbalanced datasets significantly compromise the performance of many traditional
 				\end{pmatrix}
 			\end{equation*} and where the minority class only accounts for 15\% of the samples. This simple dataset is especially useful to analyze the imbalance-compensating techniques from a mathematical perspective. Not only do we study the concepts learnt in class at a theoretical level, but we also use plugin machine learning models to illustrate how they affect density distributions.
 
-		Secondly, we target a more complex dataset.  \textcolor{red}{TO-DO}
+		Secondly, we target a more complex dataset, which gather data of more than thirty-seven thousand Twitter accounts to determine wheter they are a bot or human accounts. The number of bot accounts represents a 30\% of the total accounts. The dataset contains thirteen features, such as the existence of a profile image, location or favorites and followers count. Some variables are categorical, while others are binary or integer variables. 
 
 		The performance of the classification will be evaluated using the $F_1$ score $\in [0, 1]$, where the best possible score is 1. This metric is computed as
 			\begin{equation*}
@@ -153,14 +153,16 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 				\includegraphics[scale=0.3]{Undersampling_2D_Contour_Classification}
 				\centering
 				\caption{Influence of undersampling on the classification region of a naive Bayes classifier trained with the Gaussian dataset. The area within each circle corresponds to the cluster of points that are classified as the minority class for a given undersampling rate.}
-				\label{fig.:Undersampling_2D_Contour_Classification}
+				\label{fig:Undersampling_2D_Contour_Classification}
 			\end{figure}
+		
 			\begin{figure}
 				\includegraphics[scale=0.3]{Undersampling_F1_Score}
 				\centering
 				\caption{F1-score vs. undersampling rate.}
-				\label{fig.:Undersampling_F1_Score}
+				\label{fig:Undersampling_F1_Score}
 			\end{figure}
+		
 		Another factor that strongly influences the posterior bias is class separability. The bias is higher when conditional distributions are similar across the classes\cite{undersampling_posterior}. To analyze this behaviour we reduced the problem to a one-dimensional setting, the results are depicted in Figure \ref{fig:Undersampling_posterior}. We confirm that undersampling shifts the posterior distribution in favor of the minority class. Nevertheless, the shift caused by $\beta$ is lower under the configuration with lower overlap.
 			\begin{figure}
 			     \centering
@@ -182,21 +184,53 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 			\end{figure}
 		
 
+
 	\subsection{Oversampling}
+	
+	Another technique to balance datasets is oversampling, which is artificially creating new intances of the minority class. This can be done just by cloning existing samples, but this is not really adding new information to the model. More elaborated methods create samples by interpolation. The most widely used is Synthetic Minority Oversampling Technique (SMOTE). It works by selecting a random sample, taking one near sample and creating points in between. This procedure is repeated multiple times until the desired amount of new samples is created. 
+	
+	In Figure \ref{fig:Oversampling_2D_OriginalHistograms}, it is possible to observe the effect of oversampling on the 2D dataset. For the chosen ratio of 1, the number of samples of both classes is the same. 
+	
+	
+		\begin{figure}
+		\centering
+		\begin{subfigure}[b]{0.24\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Oversampling_2D_OriginalDataset}
+			\caption{Original.}
+			\label{fig:Oversampling_2D_OriginalDataset}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.24\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{Oversampling_2D_OversampledDataset}
+			\caption{Oversampled. Ratio=1.}
+			\label{fig:Oversampling_2D_OversampledDataset}
+		\end{subfigure}
+		\caption{Gaussian dataset.}
+		\label{fig:Oversampling_2D_OriginalHistograms}
+	\end{figure}
+	
+	A sensitivity analysis for several ratios has been conducted and the optimum ratio is determined to be around 0.55, which means that the minority class is oversampled until the number of minority samples is the 55\% of the samples of the majority class. The increase in F1 score for this ratio is almost 0.6\%. This can be appreciated in Figure \ref{fig:Oversampling_F1_Score}. 
+	
+	\begin{figure}
+		\includegraphics[scale=0.3]{Oversampling_F1_Score}
+		\centering
+		\caption{F1-score vs. oversampling rate.}
+		\label{fig:Oversampling_F1_Score}
+	\end{figure}
 
 	\subsection{Cost-Sensitive Techniques}
 	Blabla
 
 \section{Classification impact on Real Data}
-Ensemble of classifiers are known to improve the performance of single classifiers in imbalanced datasets [A Review on Ensembles for the Class Imbalance] by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
-
-\subsection{Bagging}
-
-Intro:
-As we have stated, in recent years, ensemble of classifiers have arisen as a possible solution to the class imbalance problem attracting great interest among researchers [45], [47], [50], [62].
+Ensemble Classifiers are known to improve the performance of single classifiers in imbalanced datasets [A Review on Ensembles for the Class Imbalance] by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
+	\textcolor{red}{Check this}
+As we have stated, in recent years, Ensemble Classifiers have arisen as a possible solution to the class imbalance problem attracting great interest among researchers [45], [47], [50], [62].
 %https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5978225
 
-Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
+\subsection{Bagging}
+Baggings algortihms are composed by two parts: bootstrapping and aggregation. The first part consist of selecting a subsample of the dataset. In bagging algorithms, weak learners are not trained over the whole dataset, but only over a part. For this task, decission tree classifiers are employed. Once all the classifiers are trained, the predictions of all models are then aggregated to provide the final prediction. Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
 
 \subsection{AdaBoost}
 Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in [\textcolor{red}{The strength of weak learnability}]that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms [\textcolor{red}{Top 10 algorithms in data mining}]. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is fully detailed below.
@@ -306,7 +340,7 @@ The main disadvantage of SVM is that the running time to train the model does no
 [\textcolor{red}{TO-DO}: Add comparison with SVM somehow
 
 \subsection{XGBoost}
-Blabla
+XGBoost is one of the most effective classification algorithms nowadadays, and it has been the winner of many competitions in the last years. The working principle is additive tree learning, which means that what it is learned on an iteration is used to train the next tree of the model. This new tree has to minimize the objective function, that includes a training loss and a regularization term. The second order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is going to be optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is the one that it is going to be added. 
 
 \section{Results and Discussion}
 This section discusses the performance of each classifier in terms of imbalance impact, training error and diversity.
