@@ -380,49 +380,48 @@ The performance results of each methodology are summarized in Table \ref{tab:Per
 \textbf{Method} & \textbf{Classifier} &\textbf{\textit{F-1}}& \textbf{\textit{Acc.}}&\textbf{\textit{Prec.}}&\textbf{\textit{Rec.}}&\textbf{\textit{AUC}}\\
 \hline
 
-& AdaBoost$^*$ &84.14&84.55&84.05&84.55&77.91  \\
+& AdaBoost$^*$ &68.68&84.55&74.43&63.75&77.91  \\
 \cline{2-7}
 
-& Bagging$^*$ &76.32&78.49&76.91&78.49&65.58  \\
+& Bagging$^*$ &49.98&78.03&63.27&41.31&66.31  \\
 \cline{2-7}
 
-Ensemble & R. Forest &70.73&76.96&78.39&76.96&57.71  \\
+Ensemble & R. Forest &27.73&76.96&83.33&26.63&57.71  \\
 \cline{2-7}
 
-& BoostSVM$^*$ &62.18&73.42&53.91&73.42&0.5  \\
+& BoostSVM$^*$$^*$ &62.18&73.42&53.91&73.42&0.5  \\
 \cline{2-7}
 
-& XGBoost  &\textbf{88.28}&\textbf{88.63}&\textbf{88.38}&\textbf{88.63}&\textbf{82.82} \\
+& XGBoost  &\textbf{76.70}&\textbf{88.63}&\textbf{84.18}&\textbf{70.44}&\textbf{82.82} \\
 \hline
 
-Cost & AdaCost$^*$ &77.98&79.86&78.65&79.86&67.71  \\
+Cost & AdaCost$^*$ &59.53&80.70&67.23&53.42&72.00  \\
 \cline{2-7}
 
-Sensitive& AdaMEC &85.15&85.61&85.14&85.61&78.83  \\
+Sensitive& AdaMEC &70.99&85.88&78.21&64.99&79.21  \\
 \hline
 
-& AdaBoost$^*$ &83.30&83.18&83.46&83.18&79.23  \\
+& AdaBoost$^*$ &69.03&83.14&67.42&70.71&79.17  \\
 \cline{2-7}
 
-& Bagging$^*$ &75.07&73.99&77.50&73.99&72.46  \\
+& Bagging$^*$ &59.27&75.90&53.80&65.99&72.74  \\
 \cline{2-7}
 
-Hybrid & R. Forest &80.44&80.98&80.23&80.98&73.17  \\
+Hybrid & R. Forest &60.82&80.83&66.54&56.01&72.91  \\
 \cline{2-7}
 
-(using under-& BoostSVM$^*$   & & & & &\\
+sampling)& XGBoost  &76.69&87.89&78.49&74.97&83.76 \\
 \cline{2-7}
 
-sampling)& XGBoost  &87.96&88.051&87.90&88.05&83.96 \\
+ & AdaCost$^*$ &57.51&79.29&63.24&52.72&70.82  \\
 \cline{2-7}
 
- & AdaCost$^*$ &78.67&79.17&78.40&79.17&71.18  \\
-\cline{2-7}
-
-& AdaMEC &85.10&85.13&85.07&85.13&80.74  \\
+& AdaMEC &70.97&84.62&71.19&70.75&80.19  \\
 \hline
 
 \multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}
+
+\multicolumn{4}{l}{$^{\mathrm{*}}$$^{\mathrm{*}}$Metrics are weighted.}
 
 \end{tabular}
 
@@ -430,11 +429,11 @@ sampling)& XGBoost  &87.96&88.051&87.90&88.05&83.96 \\
 \end{center}
 \end{table}
 
-Under the category of ensemble algortihms, XGBoost outperforms every other algorithm in all metrics. Looking at the F1-score, XGBoost is close to 90\%. Next algorithm is AdaBoost, whose F1-score is above 84\%. The rest of ensemble classifiers are clearly inferior. Regarding cost sensitive algorithms, for this particular dataset they do not give any advantage. For hybrid algorithms, which combine ensemble and cost-sensitive algorithms plus undersampling, the optimum beta (the one that gives the maximum F1-score) for each algorithm is selected. A few of the classifiers improve, as it is the case of Random Forest and AdaCost, while the others become a little bit more\textcolor{red}{Darle otra vuelta}. However, XGBoost still has the largest F1-score.
+Under the category of ensemble algortihms, XGBoost outperforms every other algorithm in all metrics. Looking at the F1-score, XGBoost is close to 80\%. Next algorithm is AdaBoost, whose F1-score is above 68\%. The rest of ensemble classifiers are clearly inferior. Regarding cost sensitive algorithms, for this particular dataset they do not give any substantial advantage. Only AdaMEC is slightly better than the original AdaBoost. For hybrid algorithms, which combine ensemble and cost-sensitive algorithms plus undersampling, the optimum beta (the one that gives the maximum F1-score) for each algorithm is selected. A few of the classifiers improve, as it is the case of Random Forest, Bagging and AdaBoost. However, XGBoost still has the largest F1-score.
 
 \subsection{Impact of Imbalance Data on Classification}
 
-This section studies how each algorithm works if less samples of the majority class are considered (conceptually, this is similar to undersampling the majority class). Figure \ref{Fig:ImbalanceComparison} shows the performance of each algorithm for different rates. For example, the rate of 0.5 implies that only one half of the majority class samples are considered.
+This section studies how each algorithm works if less samples of the majority class are considered (conceptually, this is similar to undersampling the majority class). Figure \ref{Fig:ImbalanceComparison} shows the performance of each algorithm for different rates. For example, the rate of 0.5 implies that the number of majority and minortiy class samples are the same.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{pictures/Imbalance_Comparison.png}}
@@ -442,7 +441,7 @@ This section studies how each algorithm works if less samples of the majority cl
 \label{Fig:ImbalanceComparison}
 \end{figure}
 
-It is really interesting to see that most of the algortihms have a peak in the F1-score metric when rates around 0.6 are considered. Taking in account that the majority class is around a 70\% of all the samples, using such rate implies that minority and majority class are much closer to be balanced. Random Forest have a strong peak on 0.52 that supports why on the previous section this algorithm improves a 10\% in its F1-score when the undersampling is included. 
+It is really interesting to see that some of the algortihms have a peak in the F1-score metric when rates around 0.6 are considered. Random Forest have a strong peak on 0.52 that supports why on the previous section this algorithm improves a 30\% in its F1-score when the undersampling is included. Bagging has the same effect, increasing around a 10\% when the optimum undersampling is applied.  
 
 
 \subsection{Overfitting Analysis}
@@ -450,13 +449,13 @@ It is really interesting to see that most of the algortihms have a peak in the F
 Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk for increasing algorithm complexity. The true risk was approximated with a validation dataset, whereas the empirical risk was computed with the training set. Complexity increases with the number of learners trained by the algorithm, as it involves a larger number of hypotheses. We conclude that XGBoost is the algorithm that minimizes the true risk. Even with just a few estimators, it is better than any other algorithm. The true risk rapidly decreases as the number of learners grows, up until 50 learners when a risk below 12\% is maintained.
 
 \begin{figure}
-	\includegraphics[scale=0.55]{True_empirical_risk_complexity}
+	\includegraphics[scale=0.45]{True_empirical_risk_complexity}
 	\centering
-	\caption{True and empirical risks vs. complexity.\textcolor{red}{Maybe add that the circles correspond to the empirical risk, while the triangles refer to the true risk.}}
+	\caption{True (triangles) and empirical (circles) risks vs. complexity.}
 	\label{fig:True_empirical_risk_complexity}
 \end{figure}
 
-Regarding other algorithms, AdaBoost and AdaMEC tend to become more similar as the number of weak learners increases. Although, not comparable to XGBoost, both performances are satisfactory. However, AdaMEC seems to outperform AdaBoost. Regarding AdaCost, Bagging and Random Forest, their trues risk is comparably high, and their performance does not improve much with the number of learners.
+Regarding other algorithms, AdaBoost and AdaMEC tend to become more similar as the number of weak learners increases. Although, not comparable to XGBoost, both performances are satisfactory. However, AdaMEC seems to outperform AdaBoost. Regarding AdaCost, Bagging and Random Forest, their true risks are comparably high, and their performance does not improve much with the number of learners.
 
 It is worth noting that the true risk remains stable after a certain number of learners, while the empirical risk always seems to decrease, this is specially visible in XGBoost. This occurs because the algorithm learns patterns that are extremely specific to the training set, but which are not generalizable to the test set. Therefore, very little improvements are seen on the true risk. %In the other algorithms, the different between empiricial and true risk is not as significant, but the true risk always remain higher than the empirical risk.
 
