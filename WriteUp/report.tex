@@ -56,12 +56,11 @@ cpeces3@gatech.edu}
 \maketitle
 
 \begin{abstract}
-This document analyzes the impact of imbalanced datasets on machine learning classifiers. It discusses several techniques to deal with the imbalance. The results are applied to train a Twitter fake account detection algorithm where the performance of these techniques is compared. 
-[\textcolor{red}{TO-DO}: Add Accomplishments here]
+This document analyzes the impact of imbalanced datasets on machine learning classifiers. It discusses several techniques to deal with the imbalance. The results are applied to train a Twitter fake account detection algorithm where the performance of these techniques is compared. It has been shown how state-of-the-art ensemble classifiers lead to a substantial increase in F1-score compared to traditional classifiers while both true and empirical risks are lower. 
 \end{abstract}
 
 \begin{IEEEkeywords}
-imbalance
+imbalance, undersampling, oversampling, boosting, bagging, cost-sensitive.
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -105,7 +104,7 @@ This study covers the impact of resampling and cost-weighting techniques to impr
 			\begin{equation*}
 				F_1 = 2\frac{\mathrm{precision}\times\mathrm{recall}}{\mathrm{precision}+\mathrm{recall}},
 			\end{equation*}
-where the precision is the ratio between correctly identified minority samples and the total number of minority samples, while the recall is given by the fraction of correctly identified minority samples over all samples.
+where the precision is the ratio between correctly identified minority samples and the total number of minority samples, while the recall is given by the fraction of correctly identified minority samples over all samples. This metric clearly explains if the classes (including the minoritary) are correctly handled by the model or not. 
 
 
 \section{Overview of the techniques}
@@ -146,7 +145,8 @@ where the precision is the ratio between correctly identified minority samples a
 		\end{align*}
 where $p$ and $p'$ denote the posterior probability of encountering a sample from the minority class when employing the original and the undersampled dataset respectively. Whereas $\beta$ denotes the probability of keeping a sample from the majority class.
 
-		The posterior is highly affected by the rate of the sampling. As more samples are removed, the classification is more biased towards the minority class. Figure \ref{fig:Undersampling_2D_Contour_Classification} shows the decision region of a naive Bayes classifier. As the training set is undersampled the region of points that are labeled as the minority class grows. The rate of undersampling not only influences the posterior bias, but also the algorithm's ability to generalize. Thus, $\beta$ should be chosen with care. Figure \ref{fig:Undersampling_F1_Score} presents the average F1-score over different training sets. We observe that the score is concave and in this case the optimum occurs with $\beta=0.82$.
+
+		The posterior is highly affected by the rate of the sampling. As more samples are removed, the classification is more biased towards the minority class. Figure \ref{fig:Undersampling_2D_Contour_Classification} shows the decision region of a naive Bayes classifier. As the training set is undersampled the region of points that are labeled as the minority class grows. The rate of undersampling not only influences the posterior bias, but also the algorithm's ability to generalize. Thus, $\beta$ should be chosen with care. Figure \ref{fig:Undersampling_F1_Score} presents the average F1-score over different training sets. We observe that the score is concave and in this case the optimum occurs with $\beta=0.82$. \textcolor{red}{I don't think so}
 
 			\begin{figure}[h]
 				\includegraphics[scale=0.45]{Undersampling_2D_Contour_Classification}
@@ -244,7 +244,9 @@ We confirm that undersampling shifts the posterior distribution in favor of the 
 		\label{fig:CostSensitive}
 	\end{figure}
 
-\section{Classification impact on Real Data}
+\section{Classification Impact on Real Data}
+For the rest of the paper, the Twitter dataset will be used. The first attempt was to use the same techniques that have been previously explained to the bi-dimensional dataset. The presence of categorical variables makes unsuitable the oversampling and custom cost-sensitive approaches. Therefore, an approach that relays on undersampling and Naive Bayes is employed. F1-score is 67.83\% and the undersampling doesn't make any improvements (even trying different betas). The only solution is to use more complex classifiers that can cope with a dataset like this. 
+
 Ensemble Classifiers are known to improve the performance of single classifiers in imbalanced datasets \cite{ensembles_review} by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
 
 \subsection{Bagging}
@@ -361,11 +363,11 @@ XGBoost is one of the most effective classification algorithms nowadays, and it 
 In practice, it is the classification alogirthm that gives the highest F1-score and accuracy. The XGBoost library is used to train this algortihm for our dataset.
 
 \section{Results and Discussion}
-This section discusses the performance of each classifier in terms of imbalance impact, training error and diversity.
+This section discusses the performance of each classifier, addresses how these algorithms work for different imbalance rates and show how the number of learners affect the true and empirical risks.
 
 \subsection{Performance Results}
 
-The best performance results of each methodology are shown in the table below. This table shows the metrics of the best F-1 score so it is possible to compare the algorithms from multiple perspectives.
+The performance results of each methodology are shown in the table below. This table shows the metrics of F1-score, accuracy, precision, recall and AUC in order to compare the algorithms from multiple perspectives. All scores have been obtained with classifiers that had 100 weak learners. 
 
 \begin{table}[htbp]
 \caption{Best Classification Performances}
@@ -399,28 +401,28 @@ Ensemble & R. Forest &70.73&76.96&78.39&76.96&57.71  \\
 Cost & AdaCost$^*$ &77.98&79.86&78.65&79.86&67.71  \\
 \cline{2-7} 
 
-Sensitive& AdaMEC & & & & &  \\
+Sensitive& AdaMEC &85.15&85.61&85.14&85.61&78.83  \\
 \hline
 
-& AdaBoost$^*$ &83.12&82.89&83.45&82.89&79.52  \\
+& AdaBoost$^*$ &83.30&83.18&83.46&83.18&79.23  \\
 \cline{2-7} 
 
-& Bagging$^*$ &74.91&73.78&77.48&73.78&72.45  \\
+& Bagging$^*$ &75.07&73.99&77.50&73.99&72.46  \\
 \cline{2-7} 
 
-Hybrid & R. Forest &80.14&80.87&79.97&80.87&72.32  \\
+Hybrid & R. Forest &80.44&80.98&80.23&80.98&73.17  \\
 \cline{2-7} 
 
 (using under-& BoostSVM$^*$   & & & & &\\
 \cline{2-7} 
 
-sampling)& XGBoost  &87.57&87.51&87.65&87.51&84.53 \\
+sampling)& XGBoost  &87.96&88.051&87.90&88.05&83.96 \\
 \cline{2-7} 
 
- & AdaCost$^*$ &78.67&79.22&78.39&79.22&71.04  \\
+ & AdaCost$^*$ &78.67&79.17&78.40&79.17&71.18  \\
 \cline{2-7} 
 
-& AdaMEC & & & & &  \\
+& AdaMEC &85.10&85.13&85.07&85.13&80.74  \\
 \hline
 
 \multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}
@@ -431,31 +433,42 @@ sampling)& XGBoost  &87.57&87.51&87.65&87.51&84.53 \\
 \end{center}
 \end{table}
 
-In the category of ensemble algortihms, XGBoost outperforms every other algortihm in all the metrics. F1-score is close to 90\%. Next algortihm is AdaBoost, whose F1-score is above 84\%. The rest of ensemble classifiers are clearly inferior. Regarding cost sensitive algortihm, for this particular dataset it doesn't give any advantage. For hybrid algortihms, which combine ensemble and cost-sensistive algortihms plus undersampling, a beta of 0.55 is chosen. A few of the classifiers improve, as it is the case of Random Forest and AdaCost, while the others become a little bit more. However, XGBoost still has the largest F1-score. 
+In the category of ensemble algortihms, XGBoost outperforms every other algortihm in all metrics. Looking at F1-score, XGBoost is close to 90\%. Next algortihm is AdaBoost, whose F1-score is above 84\%. The rest of ensemble classifiers are clearly inferior. Regarding cost sensitive algortihms, for this particular dataset they doesn't give any advantage. For hybrid algortihms, which combine ensemble and cost-sensistive algortihms plus undersampling, the optimum beta (the one that gives the maximum F1-score) for each algortihm is selected. A few of the classifiers improve, as it is the case of Random Forest and AdaCost, while the others become a little bit more. However, XGBoost still has the largest F1-score. 
 
 \subsection{Impact of Imbalance Data on Classification}
 
-Chart of F1-score vs. Imabalance
+This section study how each algortihm work if less samples of the majority class are considered (conceptually, this is similar to undersample the majority class). Figure \ref{Fig:ImbalanceComparison} shows the perfomance of each algortihm for different rates. For example, the rate of 0.5 implies that only one half of the majority class samples are considered. 
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{pictures/Imbalance_Comparison1.png}}
 \caption{Impact of imbalanced training set on classification.}
-\label{ImbalanceComparison}
+\label{Fig:ImbalanceComparison}
 \end{figure}
 
--- Comments --
+It is really interesting to see that most of the algortihms have a peak in the F1-score metric when rates around 0.6 are considered. Taking in account that the majority class is around a 70\% of all the samples, using such rate implies that minority and majority class are much closer to be balanced. 
 
 \subsection{Overfitting Analysis}
 
-Chart of risk (test and training errors) vs. Complexity
+Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk (training and test errors, respectively) for increasing algortihm complexity. It is supposed that complexity increases with the number of learners trained by the algortihm, which necessarily involve a larger number of hypotheses. As it can be appreciated, XGBoost is the algortihm that minimizes the true risk. Even with just a few estimators, it is better than any other algortihm. The true risk fastly decreases as the number of learners grow and it becomes estable below 12\% around 50 learners. 
 
-\subsection{Diversity Analysis}
+\begin{figure}
+	\includegraphics[scale=0.55]{True_empirical_risk_complexity}
+	\centering
+	\caption{True and empirical risks vs. complexity.}
+	\label{fig:True_empirical_risk_complexity}
+\end{figure}
 
-Chart of Accuracy vs. Diversity
+Regarding other algortihms, AdaBoost and AdaMEC tend to be more and more similar when the number of weak learners increase. Not being comparable to XGBoost, both performances are satisfactory. However, AdaMEC seems to be always better. Then, AdaCost, Bagging and Random Forest doesn't have any great improvement when the number of learners increases and the true risk is quite high. 
+
+It is noticeable that the true risk remains stable after a certain number of learners, while the empirical risk always seems to be decrease (this is specially visible in XGBoost). This occurs because the algorithm learns patterns that are extremely specific to the training set, but which are not generalizable to the test set. Therefore, very little improvements are seen on the true risk. In the other algortihms, the different between empricial and true risk is not as significant, but the true risk always remain higher than the empirical risk.
+
+%\subsection{Diversity Analysis}
+
+%Chart of Accuracy vs. Diversity
 % Mirar Fig. 3 de esta paper: http://users.cecs.anu.edu.au/~wanglei/My_papers/AdaBoost_SVM_IJCNN_2005.pdf
 
 \section{Conclusions}
-Blabla 
+This paper has shown how classification on imbalanced datasets can be addressed. There are methods that change the dataset on a data level, such as oversampling or undersampling, while others try to develop more complex classifiers that are more suitable for this sort of problems. In the first dataset, which only had two features, the first type of methods were employed with satisfactory results. The F1-score, which is an excellent metric for imbalanced datasets, was higher. However, applying the same method to the second dataset didn't give a significant improvement. Consequently, several ensemble and hybrid classifiers have been tested (some of them have been customly implemented). It has been determined that a substantial improvement of 20\% on F1-score can be achieved in relation to a basic Naive Bayes classifier. The ensemble classifiers that give the maximum F1-score are, first, XGBoost, and secondly, AdaMEC. It has been shown that boosting algortihms are superior than bagging algortihms, which are the other type of ensemble algorithms. Also, for this particular dataset, hybrid methods are less effective than ensemble methods. In addition, this paper has also explored the versatily of these algortihms against the number of weak-learners and the rate of imbalanced dataset. It was determined that XGBoost is the most resilient to both various imbalance rates and it has the lower empirical and true in a broad spectrum of weak learners. 
 
 \vspace{12pt}
 
