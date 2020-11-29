@@ -21,9 +21,7 @@
 
 % Math font
 %\usepackage{mathpazo}
-\usepackage{fourier} 
-
-\DeclareMathOperator*{\argmax}{arg\,max}
+%\usepackage{fourier} 
 
 % Enable subfigures
 \graphicspath{ {./pictures/} }
@@ -34,7 +32,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Imbalanced Dataset Techniques to Improve Classification of Uneven Class Distributions\\
+\title{Imbalanced Dataset Techniques to improve Classification of Uneven Class Distributions\\
 }
 
 \author{\IEEEauthorblockN{Miguel Jiménez Aparicio}
@@ -56,11 +54,11 @@ cpeces3@gatech.edu}
 \maketitle
 
 \begin{abstract}
-This document analyzes the impact of imbalanced datasets on machine learning classifiers. It discusses several techniques to deal with the imbalance. The results are applied to train a Twitter fake account detection algorithm where the performance of these techniques is compared. It has been shown how state-of-the-art ensemble classifiers lead to a substantial increase in F1-score compared to traditional classifiers while both true and empirical risks are lower. 
+This document analyzes the impact of imbalanced datasets on machine learning classifiers. It discusses several techniques to deal with the imbalance. The results are applied to train a Twitter fake account detection algorithm where the performance of these techniques is compared. 
 \end{abstract}
 
 \begin{IEEEkeywords}
-imbalance, undersampling, oversampling, boosting, bagging, cost-sensitive.
+imbalance
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -70,8 +68,9 @@ imbalance, undersampling, oversampling, boosting, bagging, cost-sensitive.
 Imbalanced datasets significantly compromise the performance of many traditional learning algorithms. The disparity of classes in the training dataset may lead the algorithm to bias the classification towards the class with more instances, or even to ignore the minority class altogether. Therefore, it is vital to find efficient ways of dealing with data imbalances.
 
 	The overall goal of our project is to provide an overview of the state-of-the-art approaches to solve the issues introduced by imbalanced datasets. Including, a performance comparison of the various techniques. We also aim to implement an efficient scheme that is able to deal with highly complex and imbalanced datasets.
+	
+	\textcolor{red}{TO-DO}: INCLUDE HERE THAT WE WILL DO RESAMPLING, COST-SENSTIVE, ENSEMBLED METHODS AND HYBRID ALGORITMS, AND EXPLAIN WHY ENSEMBLED METHODS MAY WORK BETTER THAT TRADITIONAL ALGORITHMS. 
 
-This study covers the impact of resampling and cost-weighting techniques to improve the classification. The work on \cite{ensembles_review}, suggests that when combining these techniques with ensemble methods the performance of the classification is highly improved. Hence, we also covered the combination of upsampling and downsampling with ensemble learning algorithms such as bagging and boosting. These algorithms have been implemented from scratch, facilitating the embedding of cost-sensitive frameworks as well in the ensemble learning process. 
 
 	\subsection{Methodology}
 	Firstly, we study a synthetic dataset characterized by its simplicity. It is made up of two classes following $N(\boldsymbol\mu_0, \Sigma_0)$ and $N(\boldsymbol\mu_1, \Sigma_1))$, where
@@ -104,13 +103,15 @@ This study covers the impact of resampling and cost-weighting techniques to impr
 			\begin{equation*}
 				F_1 = 2\frac{\mathrm{precision}\times\mathrm{recall}}{\mathrm{precision}+\mathrm{recall}},
 			\end{equation*}
-where the precision is the ratio between correctly identified minority samples and the total number of minority samples, while the recall is given by the fraction of correctly identified minority samples over all samples. This metric clearly explains if the classes (including the minoritary) are correctly handled by the model or not. 
+where the precision is the ratio between correctly identified minority samples and the total number of minority samples, while the recall is given by the fraction of correctly identified minority samples over all samples.
+
+	\subsection{Accomplishments}
 
 
 \section{Overview of the techniques}
 	\subsection{Undersampling}
 		Undersampling is frequently employed to balance datasets before any machine learning algorithm is applied. Undersampling involves randomly removing entries from the majority class. Figure \ref{fig:Undersampling_2D_OriginalHistograms} shows the effects of undersampling on the Gaussian training dataset. The class imbalance is somewhat countered. However, the algorithm learnt from this undersampled dataset will be affected. Namely, its ability to generalize and its posterior distribution.
-			\begin{figure}[h]
+			\begin{figure}
 			     \centering
 			     \begin{subfigure}[b]{0.24\textwidth}
 			         \centering
@@ -129,6 +130,7 @@ where the precision is the ratio between correctly identified minority samples a
 			        \label{fig:Undersampling_2D_OriginalHistograms}
 			\end{figure}
 
+	%\medskip
 	\subsubsection{Generalization Ability}
 		Induction algorithms require a sufficient amount of data to learn a model that generalizes well.  If the training set is not large, a classifier may just memorize the characteristics of the training data. Moreover, undersampling has the potential of eliminating valuable samples from consideration of the classifier entirely \cite{undersampling_generalization}, so it may exacerbate this problem of lack of data. The obtained training set may vary greatly from one undersampling to another, this leads to a high variance of the learned model. Hence, the achievable complexity of the hypothesis set must be reduced to ensure a good generalization.
 		
@@ -145,35 +147,33 @@ where the precision is the ratio between correctly identified minority samples a
 		\end{align*}
 where $p$ and $p'$ denote the posterior probability of encountering a sample from the minority class when employing the original and the undersampled dataset respectively. Whereas $\beta$ denotes the probability of keeping a sample from the majority class.
 
+		The posterior is highly affected by the rate of the sampling. As more samples are removed, the classification is more biased towards the minority class. Figure \ref{fig.:Undersampling_2D_Contour_Classification} shows the decision region of a naive Bayes classifier. As the training set is undersampled the region of points that are labeled as the minority class grows. The rate of undersampling not only influences the posterior bias, but also the algorithm's ability to generalize. Thus, $\beta$ should be chosen with care. Figure \ref{fig.:Undersampling_F1_Score} presents the average F1-score over different training sets. We observe that the score is concave and in this case the optimum occurs with $\beta=0.82$.
 
-		The posterior is highly affected by the rate of the sampling. As more samples are removed, the classification is more biased towards the minority class. Figure \ref{fig:Undersampling_2D_Contour_Classification} shows the decision region of a naive Bayes classifier. As the training set is undersampled the region of points that are labeled as the minority class grows. The rate of undersampling not only influences the posterior bias, but also the algorithm's ability to generalize. Thus, $\beta$ should be chosen with care. Figure \ref{fig:Undersampling_F1_Score} presents the average F1-score over different training sets. We observe that the score is concave and in this case the optimum occurs with $\beta=0.82$. \textcolor{red}{I don't think so}
-
-			\begin{figure}[h]
-				\includegraphics[scale=0.45]{Undersampling_2D_Contour_Classification}
+			\begin{figure}
+				\includegraphics[scale=0.3]{Undersampling_2D_Contour_Classification}
 				\centering
 				\caption{Influence of undersampling on the classification region of a naive Bayes classifier trained with the Gaussian dataset. The area within each circle corresponds to the cluster of points that are classified as the minority class for a given undersampling rate.}
 				\label{fig:Undersampling_2D_Contour_Classification}
 			\end{figure}
 		
-			\begin{figure}[h]
-				\includegraphics[scale=0.45]{Undersampling_F1_Score}
+			\begin{figure}
+				\includegraphics[scale=0.3]{Undersampling_F1_Score}
 				\centering
 				\caption{F1-score vs. undersampling rate.}
 				\label{fig:Undersampling_F1_Score}
 			\end{figure}
 		
-		Another factor that strongly influences the posterior bias is class separability. The bias is higher when conditional distributions are similar across the classes\cite{undersampling_posterior}. To analyze this behavior we reduced the problem to a one-dimensional setting, the results are depicted in Figure \ref{fig:Undersampling_posterior}.
-
-			\begin{figure}[h]
+		Another factor that strongly influences the posterior bias is class separability. The bias is higher when conditional distributions are similar across the classes\cite{undersampling_posterior}. To analyze this behaviour we reduced the problem to a one-dimensional setting, the results are depicted in Figure \ref{fig:Undersampling_posterior}. We confirm that undersampling shifts the posterior distribution in favor of the minority class. Nevertheless, the shift caused by $\beta$ is lower under the configuration with lower overlap.
+			\begin{figure}
 			     \centering
-			     \begin{subfigure}[h]{0.24\textwidth}
+			     \begin{subfigure}[b]{0.24\textwidth}
 			         \centering
 			         \includegraphics[width=\textwidth]{Undersampling_PosteriorBias}
 			         \caption{$|\mu_0 - \mu_1|=3$.}
 			         \label{fig:Undersampling_PosteriorBias}
 			     \end{subfigure}
 			     \hfill
-			     \begin{subfigure}[h]{0.24\textwidth}
+			     \begin{subfigure}[b]{0.24\textwidth}
 			         \centering
 			         \includegraphics[width=\textwidth]{Undersampling_PosteriorBias_Separated}
 			         \caption{$|\mu_0 - \mu_1|=13$.}
@@ -183,7 +183,7 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 			        \label{fig:Undersampling_posterior}
 			\end{figure}
 		
-We confirm that undersampling shifts the posterior distribution in favor of the minority class. Nevertheless, the shift caused by $\beta$ is lower under the configuration with lower overlap.
+
 
 	\subsection{Oversampling}
 	
@@ -192,16 +192,16 @@ We confirm that undersampling shifts the posterior distribution in favor of the 
 	In Figure \ref{fig:Oversampling_2D_OriginalHistograms}, it is possible to observe the effect of oversampling on the 2D dataset. For the chosen ratio of 1, the number of samples of both classes is the same. 
 	
 	
-		\begin{figure}[h]
+		\begin{figure}
 		\centering
-		\begin{subfigure}[h]{0.24\textwidth}
+		\begin{subfigure}[b]{0.24\textwidth}
 			\centering
 			\includegraphics[width=\textwidth]{Oversampling_2D_OriginalDataset}
 			\caption{Original.}
 			\label{fig:Oversampling_2D_OriginalDataset}
 		\end{subfigure}
 		\hfill
-		\begin{subfigure}[h]{0.24\textwidth}
+		\begin{subfigure}[b]{0.24\textwidth}
 			\centering
 			\includegraphics[width=\textwidth]{Oversampling_2D_OversampledDataset}
 			\caption{Oversampled. Ratio=1.}
@@ -213,47 +213,30 @@ We confirm that undersampling shifts the posterior distribution in favor of the 
 	
 	A sensitivity analysis for several ratios has been conducted and the optimum ratio is determined to be around 0.55, which means that the minority class is oversampled until the number of minority samples is the 55\% of the samples of the majority class. The increase in F1 score for this ratio is almost 0.6\%. This can be appreciated in Figure \ref{fig:Oversampling_F1_Score}. 
 	
-	\begin{figure}[h]
-		\includegraphics[scale=0.45]{Oversampling_F1_Score}
+	\begin{figure}
+		\includegraphics[scale=0.3]{Oversampling_F1_Score}
 		\centering
 		\caption{F1-score vs. oversampling rate.}
 		\label{fig:Oversampling_F1_Score}
 	\end{figure}
 
 	\subsection{Cost-Sensitive Techniques}
-	Unlike the data-level based methods seen above, the cost-sensitive learning requires the training algorithm to be modified in order to include uneven penalizations when samples are misclassified. In other words, we are minimizing the risk based on an uneven loss function. Depending on the loss function that we choose, the risk function -- and therefore the estimated distribution parameter -- will impact the decision boundaries of the new cost-sensitive classifier. Although there are multiple loss functions to choose, Weighted Likelihood was chosen for the purposes of this study. This approach consists of weighting the training samples according to their cost of misclassification. The loss function and empirical risk become then:
-	
-	\begin{equation*}
-	\begin{aligned} \label{costWL}
-			L(y,\boldsymbol x, \theta) &= c(y)\mathbbm{1}\{ \hat y \neq y \} \\
-			R^{WL}_{emp}(\theta) &= \int \int L(y,\boldsymbol x, \theta) p(\boldsymbol x, y) d\boldsymbol x \text{ }dy=\\
-				      &=-\frac{1}{N} \sum_n c(y_n,\boldsymbol x_n,) \ln p(y_n | \boldsymbol x_n;\theta)
-		\end{aligned}
-	\end{equation*}
-	
-	where $L$ is the loss function, $R$ is the empirical risk, $c(y)$ is the cost of misclassifying class $y$ and $\theta$ is the set of estimated classifier parameters. With this configuration, the decision rule of the Naive-Bayes classifier yields to:
-	
-	$$ h^{NB}(\boldsymbol x) = \underset{k}{\operatorname{argmax}} \text{ } c(y_k) \pi_k p_{\boldsymbol x | y}(\boldsymbol x|y=k)$$
-	
-	Fig. \ref{fig:CostSensitive} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%. 
-	
-	\begin{figure}[h]
-		\includegraphics[scale=0.45]{pictures/cost-sensitive-dataset1.png}
-		\centering
-		\caption{F1-score vs. cost applied.}
-		\label{fig:CostSensitive}
-	\end{figure}
+	Blabla
 
-\section{Classification Impact on Real Data}
-For the rest of the paper, the Twitter dataset will be used. The first attempt was to use the same techniques that have been previously explained to the bi-dimensional dataset. The presence of categorical variables makes unsuitable the oversampling and custom cost-sensitive approaches. Therefore, an approach that relays on undersampling and Naive Bayes is employed. F1-score is 67.83\% and the undersampling doesn't make any improvements (even trying different betas). The only solution is to use more complex classifiers that can cope with a dataset like this. 
+\section{Classification impact on Real Data}
+Ensemble Classifiers are known to improve the performance of single classifiers in imbalanced datasets [A Review on Ensembles for the Class Imbalance] by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
+	\textcolor{red}{Check this}
+As we have stated, in recent years, Ensemble Classifiers have arisen as a possible solution to the class imbalance problem attracting great interest among researchers [45], [47], [50], [62]. 
 
-Ensemble Classifiers are known to improve the performance of single classifiers in imbalanced datasets \cite{ensembles_review} by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
+	\medskip
+	Cita Fondo Flamenco: \cite{ensembles_review}
+%https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5978225
 
 \subsection{Bagging}
-Baggings algorithms are composed by two parts: bootstrapping and aggregation. The first part consist of selecting a subsample of the dataset. In bagging algorithms, weak learners are not trained over the whole dataset, but only over a part. For this task, decission tree classifiers are employed. Once all the classifiers are trained, the predictions of all models are then aggregated to provide the final prediction. Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
+Baggings algortihms are composed by two parts: bootstrapping and aggregation. The first part consist of selecting a subsample of the dataset. In bagging algorithms, weak learners are not trained over the whole dataset, but only over a part. For this task, decission tree classifiers are employed. Once all the classifiers are trained, the predictions of all models are then aggregated to provide the final prediction. Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
 
 \subsection{AdaBoost}
-Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in \cite{schapire} that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms \cite{top10algo}. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is fully detailed below.
+Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in [\textcolor{red}{The strength of weak learnability}]that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms [\textcolor{red}{Top 10 algorithms in data mining}]. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is fully detailed below.
 
 \begin{algorithm}
   \KwInput{Training set $D = \{x_i, y_i\}, i=1,\dots,N;$ and $y_i \in \{ -1,+1\}$; $T:$ Number of iterations; $I:$ Weak learner} 
@@ -291,18 +274,18 @@ Unlike bagging, boosting fits the weak learners in an adaptive way: a different 
 % Maybe we need to delete or reduce this paragraph
 This custom implementation uses single decision trees with 2 leaf nodes. It is given the number of maximum iterations (weak learners) that will be fitted, and a dataset $D$ formed by N training samples, each constituted by a feature vector $\boldsymbol{x}_i$ and an associated binary label $y_i$. For each iteration, a weak classifier is created using the weighted training samples. For the first iteration, we allocate the same weight for all the samples ($1/N$). Once the decision tree has been created, we predict the class of the training samples and compute the weighted misclassification error $\epsilon_t$. Then, the significance $\alpha_t$ is calculated based on that error. Finally, the weights of each training samples are updated depending on the significance and whether the sample was correctly classified or not. Note that the weights are increased by $e^{\alpha}$ if the sample is misclassified or decreased by $e^{-\alpha}$ if correctly classified, with  $\alpha_t \in [0,1]$ because $\epsilon_t \in [0,0.5]$. 
 
-AdaBoost uses the whole training samples to create each weak learner serially --in contrast to \textit{Bagging}, where \textit{bootstrap aggregating} is used to construct ensembles-- giving more focus to challenging instances and turn the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibility of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason behind why weak learners with low variance but high bias --such as decision trees-- are well adapted for boosting. Lastly the overall literature suggest AdaBoost algorithms are generally resistant to overfitting regardless the number of weak estimators we use, and there are very few cases reported to overfit the training data \cite{BoostingStats}. This fascinating issue is explained due to 1) as the iterations proceed the weak learners tend to have less significance and 2) similarly to SVM, ensemble classifiers maximize the margin which allows promoting good generalization \cite{margin_adaboost}. The impact of its complexity on overfitting is covered in the result section.
+AdaBoost uses the whole training samples to create each weak learner serially --in contrast to \textit{Bagging}, where \textit{bootstrap aggregating} is used to construct ensembles-- giving more focus to challenging instances and turn the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibility of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason behind why weak learners with low variance but high bias --such as decision trees-- are well adapted for boosting. Lastly the overall literature suggest AdaBoost algorithms are generally resistant to overfitting regardless the number of weak estimators we use, and there are very few cases reported to overfit the training data [[\textcolor{red}{Additive Logistic Regression: A Statistical View of Boosting}]. This fascinating issue is explained due to 1) as the iterations proceed the weak learners tend to have less significance and 2) similarly to SVM, ensemble classifiers maximize the margin which allows promoting good generalization [\textcolor{red}{The dynamics of AdaBoost: Cyclic behavior and convergence of margin}]. The impact of its complexity on overfitting is covered in the result section.
 
 \subsection{AdaCost}
-The AdaBoost algorithm is an accuracy-oriented algorithm. In other words, it assumes each class has an even distribution. In case the class distribution is uneven, the algorithm may incur in systematic biases toward the majority class. Therefore, several methods have been proposed to incorporate an asymmetric weight update and eliminate these biases. The literature suggest two different strategies to implement these changes \cite{need_boosting} 1) modify the model learnt from data or 2) modifying how the model is used to make a decision. AdaCost falls into the former category, and it aims at modifying the update of the weights based on a slight modification:
+The AdaBoost algorithm is an accuracy-oriented algorithm. In other words, it assumes each class has an even distribution. In case the class distribution is uneven, the algorithm may incur in systematic biases toward the majority class. Therefore, several methods have been proposed to incorporate an asymmetric weight update and eliminate these biases. The literature suggest two different strategies to implement this changes [\textcolor{red}{Cost-sensitive boosting algorithms: Do we really need them?}]: 1) modify the model learnt from data or 2) modifying how the model is used to make a decision. AdaCost falls into the former category, and it aims at modifying the update of the weights based on a slight modification:
 
 $$ W_{t+1}(i) = W_t(i) \exp \left(-\alpha_t y_i h_t(x_i) \boxed{\phi(i)} \text{ } \right) \text{  with  } W_1(i) = \frac{c_i}{\sum_{i=1}^Nc_i}$$
 
-Where the new boxed term is called cost-adjustment function. We use this function to allocate different penalizations across different classes. This function is left for design since the literature suggest more than one alternatives. In this project we used the function suggested in \cite{ensembles_review}: 
+Where the new boxed term is called cost-adjustment function. We use this function to allocate different penalizations across different classes. This function is left for design since the literature suggest more than one alternatives. In this project we used the function suggested in [\textcolor{red}{A Review on Ensembles for the Class Imbalance}]: 
 
 $$\phi(i) = 0.5C_i \left( \mathbbm{1}\{ h_t(\boldsymbol x)=1\} -  \mathbbm{1}\{ h_t(\boldsymbol x)=-1\} \right)+0.5$$
 
-Where $C_i$ is a hyper-parameter that establishes the misclassification cost of the sample $i$, which ultimately depends upon the class of that sample. This cost-adjustment function yields to an upper bound cumulative misclassification cost equal to $d\prod_{t=1}^TZ_t$, where $d= \sum c_i$ and $Z_t$ is the sum of the costs calculated for $W_{t+1}$, i.e. the coefficient that we use to normalize the weights in AdaBoost \cite{adacost}. Due to the fact that boosting minimizes $Z_t$, the significance ultimately needs to be updated in a different way \cite{improved_boosting}:
+Where $C_i$ is a hyper-parameter that establishes the misclassification cost of the sample $i$, which ultimately depends upon the class of that sample. This cost-adjustment function yields to an upper bound cumulative misclassification cost equal to $d\prod_{t=1}^TZ_t$, where $d= \sum c_i$ and $Z_t$ is the sum of the costs calculated for $W_{t+1}$, i.e. the coefficient that we use to normalize the weights in AdaBoost [AdaCost]. Due to the fact that boosting minimizes $Z_t$, the significance ultimately needs to be updated in a different way[ Improved boost- ing algorithms using confidence-rated predictions.]:
 
 $$ \alpha = \frac{1}{2}\ln\frac{1+r}{1-r}\quad \text{where } r=\sum_iD(i)u_i, \quad u_i=y_i h(x_i)\phi(i)$$
 
@@ -313,11 +296,11 @@ The AdaMEC algorithm falls into the second category introduced in the previous p
 
 $$ H_{AdaMEC}(\boldsymbol x) = sign \left( \sum_{y \in \{-1,+1\}} c(y) \sum_{\tau: h_{\tau}(\boldsymbol x)=y} \alpha_{\tau} h_{\tau}(\boldsymbol x)\right)$$
 
-This is called Minimum Expected Cost rule and it assumes that the wighted votes of each weak learners are proportional to the class probabilities. We have incorporated this classifier in this study as it has been reported as one of the best cost-sensitive AdaBoost classifiers \cite{need_boosting}.
+This is called Minimum Expected Cost rule and it assumes that the wighted votes of each weak learners are proportional to the class probabilities. We have incorporated this classifier in this study as it has been reported as one of the best cost-sensitive AdaBoost classifiers [\textcolor{red}{Cost-sensitive boosting algorithms: Do we really need them?}].
 
 
 \subsection{Boosting SVM}
-One of the practical concerns about AdaBoost is the accuracy/diversity dilemma \cite{study_boosted_svm}, which means that when the weak learners are actually strong classifiers and they do not disagree too much on their vote, the performance of boosting is weakened. Support vector machines (SVM) are known to be strong learners that minimize structural risk such that they should not work well when embedded. However, the work on (\cite{study_boosted_svm},\cite{boosting_svm}) suggests that if properly weakened, Boosted SVM can exceed the classification performance of traditional SVMs or AdaBoost on imbalanced datasets, and gain control over the accuracy/diversity issue. To do that, we have used radial basis function kernel (RBF), which uses the Gaussian width $\sigma$ to map the features on a high dimensional feature space. The performance of RBFSVM can be conveniently controlled by adjusting $\sigma$. Large values of sigma will lead to very weak classifiers. The full algorithm description is detailed below:
+One of the practical concerns about AdaBoost is the accuracy/diversity dilemma [A study of adaboost with SVM based on weak learners], which means that when the weak learners are actually strong classifiers and they do not disagree too much on their vote, the performance of boosting is weakened. Support vector machines (SVM) are known to be strong learners that minimize structural risk [12], so in a first glance they should not work well when ensembled. However, the literature [\textcolor{red}{Boosting Support Vector Machines Successfully}][AStudyofAdaBoostwithSVMBasedWeak Learners][Boosting Support Vector Machines] suggests that if properly weakened, Boosted SVM can exceed the classification performance of traditional SVMs or AdaBoost on imbalanced datasets, and gain control over the accuracy/diversity issue. To do that, we have used radial basis function kernel (RBF), which uses the Gaussian width $\sigma$ to map the features on a high dimensional feature space. The performance of RBFSVM can be conveniently controlled by adjusting $\sigma$. Large values of sigma will lead to very weak classifiers. The full algorithm description is detailed below:
 
 \begin{algorithm}
   
@@ -355,19 +338,19 @@ One of the practical concerns about AdaBoost is the accuracy/diversity dilemma \
 \caption{Boosted SVM Algorithm}
 \end{algorithm}
 
-The main disadvantage of SVM is that the running time to train the model does not scale well with the size of the training set\cite{boosting_svm}. Our training set has more than 30,000 samples so the training would take a significant amount of time. Therefore, a preprocessing step was applied to the training data, whose dimensionality is reduced using PCA and ultimately under-sampled to speed-up the training process. 
+The main disadvantage of SVM is that the running time to train the model does not scale well with the size of the training set [\textcolor{red}{Elkin}]. Our training set has more than 30,000 samples so the training would take a significant amount of time. Therefore, a preprocessing step was applied to the training data, whose dimensionality is reduced using PCA and ultimately under-sampled to speed-up the training process. 
+
+[\textcolor{red}{TO-DO}: Add comparison with SVM somehow
 
 \subsection{XGBoost}
-XGBoost is one of the most effective classification algorithms nowadays, and it has been the winner of many competitions in the last years. The working principle is additive tree learning, which means that what it is learned on an iteration is used to train the next tree of the model. This new tree has to minimize the objective function, that includes a training loss and a regularization term. The second order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is going to be optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is the one that it is going to be added. 
-
-In practice, it is the classification alogirthm that gives the highest F1-score and accuracy. The XGBoost library is used to train this algortihm for our dataset.
+XGBoost is one of the most effective classification algorithms nowadadays, and it has been the winner of many competitions in the last years. The working principle is additive tree learning, which means that what it is learned on an iteration is used to train the next tree of the model. This new tree has to minimize the objective function, that includes a training loss and a regularization term. The second order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is going to be optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is the one that it is going to be added. 
 
 \section{Results and Discussion}
-This section discusses the performance of each classifier, addresses how these algorithms work for different imbalance rates and show how the number of learners affect the true and empirical risks.
+This section discusses the performance of each classifier in terms of imbalance impact, training error and diversity.
 
 \subsection{Performance Results}
 
-The performance results of each methodology are shown in the table below. This table shows the metrics of F1-score, accuracy, precision, recall and AUC in order to compare the algorithms from multiple perspectives. All scores have been obtained with classifiers that had 100 weak learners. 
+The best performance results of each methodology are shown in the table below. This table shows the metrics of the best F-1 score so it is possible to compare the algorithms from multiple perspectives.
 
 \begin{table}[htbp]
 \caption{Best Classification Performances}
@@ -377,52 +360,52 @@ The performance results of each methodology are shown in the table below. This t
 \begin{tabular}{|c|c|c|c|c|c|c|}
 
 \hline
-\textbf{Type of} & & \multicolumn{5}{|c|}{\textbf{Scores (\%)}} \\
+\textbf{Type of} & & \multicolumn{5}{|c|}{\textbf{Scores}} \\
 \cline{3-7} 
 
 \textbf{Method} & \textbf{Classifier} &\textbf{\textit{F-1}}& \textbf{\textit{Acc.}}&\textbf{\textit{Prec.}}&\textbf{\textit{Rec.}}&\textbf{\textit{AUC}}\\
 \hline
 
-& AdaBoost$^*$ &84.14&84.55&84.05&84.55&77.91  \\
+& AdaBoost$^*$ & & & & &  \\
 \cline{2-7} 
 
-& Bagging$^*$ &76.32&78.49&76.91&78.49&65.58  \\
+& Bagging$^*$ & & & & &  \\
 \cline{2-7} 
 
-Ensemble & R. Forest &70.73&76.96&78.39&76.96&57.71  \\
+Ensemble & R. Forest & & & & &  \\
 \cline{2-7} 
 
-& BoostSVM$^*$ &62.18&73.42&53.91&73.42&0.5  \\
+& BoostSVM$^*$ & & & & &  \\
 \cline{2-7} 
 
-& XGBoost  &\textbf{88.28}&\textbf{88.63}&\textbf{88.38}&\textbf{88.63}&\textbf{82.82} \\
+& XGBoost & & & & &  \\
 \hline
 
-Cost & AdaCost$^*$ &77.98&79.86&78.65&79.86&67.71  \\
+Cost & AdaCost$^*$ & & & & &  \\
 \cline{2-7} 
 
-Sensitive& AdaMEC &85.15&85.61&85.14&85.61&78.83  \\
+Sensitive& AdaMEC & & & & &  \\
 \hline
 
-& AdaBoost$^*$ &83.30&83.18&83.46&83.18&79.23  \\
+& AdaBoost$^*$ & & & & &  \\
 \cline{2-7} 
 
-& Bagging$^*$ &75.07&73.99&77.50&73.99&72.46  \\
+& Bagging$^*$ & & & & &  \\
 \cline{2-7} 
 
-Hybrid & R. Forest &80.44&80.98&80.23&80.98&73.17  \\
+Hybrid & R. Forest & & & & &  \\
 \cline{2-7} 
 
-(using under-& BoostSVM$^*$   & & & & &\\
+(using under-& BoostSVM$^*$ & & & & &  \\
 \cline{2-7} 
 
-sampling)& XGBoost  &87.96&88.051&87.90&88.05&83.96 \\
+sampling)& XGBoost & & & & &  \\
 \cline{2-7} 
 
- & AdaCost$^*$ &78.67&79.17&78.40&79.17&71.18  \\
+ & AdaCost$^*$ & & & & &  \\
 \cline{2-7} 
 
-& AdaMEC &85.10&85.13&85.07&85.13&80.74  \\
+& AdaMEC & & & & &  \\
 \hline
 
 \multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}
@@ -433,42 +416,207 @@ sampling)& XGBoost  &87.96&88.051&87.90&88.05&83.96 \\
 \end{center}
 \end{table}
 
-In the category of ensemble algortihms, XGBoost outperforms every other algortihm in all metrics. Looking at F1-score, XGBoost is close to 90\%. Next algortihm is AdaBoost, whose F1-score is above 84\%. The rest of ensemble classifiers are clearly inferior. Regarding cost sensitive algortihms, for this particular dataset they doesn't give any advantage. For hybrid algortihms, which combine ensemble and cost-sensistive algortihms plus undersampling, the optimum beta (the one that gives the maximum F1-score) for each algortihm is selected. A few of the classifiers improve, as it is the case of Random Forest and AdaCost, while the others become a little bit more. However, XGBoost still has the largest F1-score. 
+-- Comments --
 
 \subsection{Impact of Imbalance Data on Classification}
 
-This section study how each algortihm work if less samples of the majority class are considered (conceptually, this is similar to undersample the majority class). Figure \ref{Fig:ImbalanceComparison} shows the perfomance of each algortihm for different rates. For example, the rate of 0.5 implies that only one half of the majority class samples are considered. 
+Chart of F1-score vs. Imabalance
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{pictures/Imbalance_Comparison1.png}}
 \caption{Impact of imbalanced training set on classification.}
-\label{Fig:ImbalanceComparison}
+\label{ImbalanceComparison}
 \end{figure}
 
-It is really interesting to see that most of the algortihms have a peak in the F1-score metric when rates around 0.6 are considered. Taking in account that the majority class is around a 70\% of all the samples, using such rate implies that minority and majority class are much closer to be balanced. 
+-- Comments --
 
 \subsection{Overfitting Analysis}
 
-Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk (training and test errors, respectively) for increasing algortihm complexity. It is supposed that complexity increases with the number of learners trained by the algortihm, which necessarily involve a larger number of hypotheses. As it can be appreciated, XGBoost is the algortihm that minimizes the true risk. Even with just a few estimators, it is better than any other algortihm. The true risk fastly decreases as the number of learners grow and it becomes estable below 12\% around 50 learners. 
+Chart of risk (test and training errors) vs. Complexity
 
-\begin{figure}
-	\includegraphics[scale=0.55]{True_empirical_risk_complexity}
-	\centering
-	\caption{True and empirical risks vs. complexity.}
-	\label{fig:True_empirical_risk_complexity}
-\end{figure}
+\subsection{Diversity Analysis}
 
-Regarding other algortihms, AdaBoost and AdaMEC tend to be more and more similar when the number of weak learners increase. Not being comparable to XGBoost, both performances are satisfactory. However, AdaMEC seems to be always better. Then, AdaCost, Bagging and Random Forest doesn't have any great improvement when the number of learners increases and the true risk is quite high. 
-
-It is noticeable that the true risk remains stable after a certain number of learners, while the empirical risk always seems to be decrease (this is specially visible in XGBoost). This occurs because the algorithm learns patterns that are extremely specific to the training set, but which are not generalizable to the test set. Therefore, very little improvements are seen on the true risk. In the other algortihms, the different between empricial and true risk is not as significant, but the true risk always remain higher than the empirical risk.
-
-%\subsection{Diversity Analysis}
-
-%Chart of Accuracy vs. Diversity
+Chart of Accuracy vs. Diversity
 % Mirar Fig. 3 de esta paper: http://users.cecs.anu.edu.au/~wanglei/My_papers/AdaBoost_SVM_IJCNN_2005.pdf
 
 \section{Conclusions}
-This paper has shown how classification on imbalanced datasets can be addressed. There are methods that change the dataset on a data level, such as oversampling or undersampling, while others try to develop more complex classifiers that are more suitable for this sort of problems. In the first dataset, which only had two features, the first type of methods were employed with satisfactory results. The F1-score, which is an excellent metric for imbalanced datasets, was higher. However, applying the same method to the second dataset didn't give a significant improvement. Consequently, several ensemble and hybrid classifiers have been tested (some of them have been customly implemented). It has been determined that a substantial improvement of 20\% on F1-score can be achieved in relation to a basic Naive Bayes classifier. The ensemble classifiers that give the maximum F1-score are, first, XGBoost, and secondly, AdaMEC. It has been shown that boosting algortihms are superior than bagging algortihms, which are the other type of ensemble algorithms. Also, for this particular dataset, hybrid methods are less effective than ensemble methods. In addition, this paper has also explored the versatily of these algortihms against the number of weak-learners and the rate of imbalanced dataset. It was determined that XGBoost is the most resilient to both various imbalance rates and it has the lower empirical and true in a broad spectrum of weak learners. 
+Blabla 
+
+\newpage
+a
+\newpage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Abbreviations and Acronyms}\label{AA}
+Define abbreviations and acronyms the first time they are used in the text, 
+even after they have been defined in the abstract. Abbreviations such as 
+IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use 
+abbreviations in the title or heads unless they are unavoidable.
+
+\subsection{Units}
+\begin{itemize}
+\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
+\item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
+\item Do not mix complete spellings and abbreviations of units: ``Wb/m\textsuperscript{2}'' or ``webers per square meter'', not ``webers/m\textsuperscript{2}''. Spell out units when they appear in text: ``. . . a few henries'', not ``. . . a few H''.
+\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
+\end{itemize}
+
+\subsection{Equations}
+Number equations consecutively. To make your 
+equations more compact, you may use the solidus (~/~), the exp function, or 
+appropriate exponents. Italicize Roman symbols for quantities and variables, 
+but not Greek symbols. Use a long dash rather than a hyphen for a minus 
+sign. Punctuate equations with commas or periods when they are part of a 
+sentence, as in:
+\begin{equation}
+a+b=\gamma\label{eq}
+\end{equation}
+
+Be sure that the 
+symbols in your equation have been defined before or immediately following 
+the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
+the beginning of a sentence: ``Equation \eqref{eq} is . . .''
+
+\subsection{\LaTeX-Specific Advice}
+
+Please use ``soft'' (e.g., \verb|\eqref{Eq}|) cross references instead
+of ``hard'' references (e.g., \verb|(1)|). That will make it possible
+to combine sections, add equations, or change the order of figures or
+citations without having to go through the file line by line.
+
+Please don't use the \verb|{eqnarray}| equation environment. Use
+\verb|{align}| or \verb|{IEEEeqnarray}| instead. The \verb|{eqnarray}|
+environment leaves unsightly spaces around relation symbols.
+
+Please note that the \verb|{subequations}| environment in {\LaTeX}
+will increment the main equation counter even when there are no
+equation numbers displayed. If you forget that, you might write an
+article in which the equation numbers skip from (17) to (20), causing
+the copy editors to wonder if you've discovered a new method of
+counting.
+
+{\BibTeX} does not work by magic. It doesn't get the bibliographic
+data from thin air but from .bib files. If you use {\BibTeX} to produce a
+bibliography you must send the .bib files. 
+
+{\LaTeX} can't read your mind. If you assign the same label to a
+subsubsection and a table, you might find that Table I has been cross
+referenced as Table IV-B3. 
+
+{\LaTeX} does not have precognitive abilities. If you put a
+\verb|\label| command before the command that updates the counter it's
+supposed to be using, the label will pick up the last counter to be
+cross referenced instead. In particular, a \verb|\label| command
+should not go before the caption of a figure or a table.
+
+Do not use \verb|\nonumber| inside the \verb|{array}| environment. It
+will not stop equation numbers inside \verb|{array}| (there won't be
+any anyway) and it might stop a wanted equation number in the
+surrounding equation.
+
+\subsection{Some Common Mistakes}\label{SCM}
+\begin{itemize}
+\item The word ``data'' is plural, not singular.
+\item The subscript for the permeability of vacuum $\mu_{0}$, and other common scientific constants, is zero with subscript formatting, not a lowercase letter ``o''.
+\item In American English, commas, semicolons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
+\item A graph within a graph is an ``inset'', not an ``insert''. The word alternatively is preferred to the word ``alternately'' (unless you really mean something that alternates).
+\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
+\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
+\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
+\item Do not confuse ``imply'' and ``infer''.
+\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
+\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
+\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
+\end{itemize}
+An excellent style manual for science writers is \cite{b7}.
+
+\subsection{Authors and Affiliations}
+\textbf{The class file is designed for, but not limited to, six authors.} A 
+minimum of one author is required for all conference articles. Author names 
+should be listed starting from left to right and then moving down to the 
+next line. This is the author sequence that will be used in future citations 
+and by indexing services. Names should not be listed in columns nor group by 
+affiliation. Please keep your affiliations as succinct as possible (for 
+example, do not differentiate among departments of the same organization).
+
+\subsection{Identify the Headings}
+Headings, or heads, are organizational devices that guide the reader through 
+your paper. There are two types: component heads and text heads.
+
+Component heads identify the different components of your paper and are not 
+topically subordinate to each other. Examples include Acknowledgments and 
+References and, for these, the correct style to use is ``Heading 5''. Use 
+``figure caption'' for your Figure captions, and ``table head'' for your 
+table title. Run-in heads, such as ``Abstract'', will require you to apply a 
+style (in this case, italic) in addition to the style provided by the drop 
+down menu to differentiate the head from the text.
+
+Text heads organize the topics on a relational, hierarchical basis. For 
+example, the paper title is the primary text head because all subsequent 
+material relates and elaborates on this one topic. If there are two or more 
+sub-topics, the next level head (uppercase Roman numerals) should be used 
+and, conversely, if there are not at least two sub-topics, then no subheads 
+should be introduced.
+
+\subsection{Figures and Tables}
+\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
+bottom of columns. Avoid placing them in the middle of columns. Large 
+figures and tables may span across both columns. Figure captions should be 
+below the figures; table heads should appear above the tables. Insert 
+figures and tables after they are cited in the text. Use the abbreviation 
+``Fig.~\ref{fig}'', even at the beginning of a sentence.
+
+\begin{table}[htbp]
+\caption{Table Type Styles}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
+\cline{2-4} 
+\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
+\hline
+copy& More table copy$^{\mathrm{a}}$& &  \\
+\hline
+\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics{pictures/fig1.png}}
+\caption{Example of a figure caption.}
+\label{fig}
+\end{figure}
+
+Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
+rather than symbols or abbreviations when writing Figure axis labels to 
+avoid confusing the reader. As an example, write the quantity 
+``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
+units in the label, present them within parentheses. Do not label axes only 
+with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
+\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
+quantities and units. For example, write ``Temperature (K)'', not 
+``Temperature/K''.
+
+\section*{Acknowledgment}
+
+The preferred spelling of the word ``acknowledgment'' in America is without 
+an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
+G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
+acknowledgments in the unnumbered footnote on the first page.
 
 \vspace{12pt}
 
