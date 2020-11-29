@@ -230,7 +230,7 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 
 \textcolor{red}{Maybe explain what $\pi_k$ stands for.}
 	
-	Fig. \ref{fig:F!_Score} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%.
+	Fig. \ref{fig:F1_Score} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%.
 	
 \section{Classification Impact on Real Data}
 The remainder of the paper studies the Twitter dataset. The first attempt was to use the same techniques as in the bi-dimensional dataset. Nevertheless, the presence of categorical variables makes oversampling and custom cost-sensitive approaches unsuitable. Therefore, the first approach relied solely on undersampling and Naive Bayes. It achieved a F1-score of 67.83\% and the undersampling did not improve the performance. The only solution is to use more complex classifiers that can cope with a dataset like this.
