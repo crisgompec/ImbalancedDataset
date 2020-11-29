@@ -342,6 +342,8 @@ The main disadvantage of SVM is that the running time to train the model does no
 \subsection{XGBoost}
 XGBoost is one of the most effective classification algorithms nowadadays, and it has been the winner of many competitions in the last years. The working principle is additive tree learning, which means that what it is learned on an iteration is used to train the next tree of the model. This new tree has to minimize the objective function, that includes a training loss and a regularization term. The second order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is going to be optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is the one that it is going to be added. 
 
+In practice, it is the classification alogirthm that gives the highest F1-score and accuracy. The XGBoost library is used to train this algortihm for our dataset.
+
 \section{Results and Discussion}
 This section discusses the performance of each classifier in terms of imbalance impact, training error and diversity.
 
@@ -363,43 +365,43 @@ The best performance results of each methodology are shown in the table below. T
 \textbf{Method} & \textbf{Classifier} &\textbf{\textit{F-1}}& \textbf{\textit{Acc.}}&\textbf{\textit{Prec.}}&\textbf{\textit{Rec.}}&\textbf{\textit{AUC}}\\
 \hline
 
-& AdaBoost$^*$ & & & & &  \\
+& AdaBoost$^*$ &84.14&84.55&84.05&84.55&77.91  \\
 \cline{2-7} 
 
-& Bagging$^*$ & & & & &  \\
+& Bagging$^*$ &76.32&78.49&76.91&78.49&65.58  \\
 \cline{2-7} 
 
-Ensemble & R. Forest & & & & &  \\
+Ensemble & R. Forest &70.73&76.96&78.39&76.96&57.71  \\
 \cline{2-7} 
 
-& BoostSVM$^*$ & & & & &  \\
+& BoostSVM$^*$ &62.18&73.42&53.91&73.42&0.5  \\
 \cline{2-7} 
 
-& XGBoost & & & & &  \\
+& XGBoost  &\textbf{88.28}&\textbf{88.63}&\textbf{88.38}&\textbf{88.63}&\textbf{82.82} \\
 \hline
 
-Cost & AdaCost$^*$ & & & & &  \\
+Cost & AdaCost$^*$ &77.98&79.86&78.65&79.86&67.71  \\
 \cline{2-7} 
 
 Sensitive& AdaMEC & & & & &  \\
 \hline
 
-& AdaBoost$^*$ & & & & &  \\
+& AdaBoost$^*$ &83.12&82.89&83.45&82.89&79.52  \\
 \cline{2-7} 
 
-& Bagging$^*$ & & & & &  \\
+& Bagging$^*$ &74.91&73.78&77.48&73.78&72.45  \\
 \cline{2-7} 
 
-Hybrid & R. Forest & & & & &  \\
+Hybrid & R. Forest &80.14&80.87&79.97&80.87&72.32  \\
 \cline{2-7} 
 
-(using under-& BoostSVM$^*$ & & & & &  \\
+(using under-& BoostSVM$^*$   & & & & &\\
 \cline{2-7} 
 
-sampling)& XGBoost & & & & &  \\
+sampling)& XGBoost  &87.57&87.51&87.65&87.51&84.53 \\
 \cline{2-7} 
 
- & AdaCost$^*$ & & & & &  \\
+ & AdaCost$^*$ &78.67&79.22&78.39&79.22&71.04  \\
 \cline{2-7} 
 
 & AdaMEC & & & & &  \\
@@ -413,7 +415,7 @@ sampling)& XGBoost & & & & &  \\
 \end{center}
 \end{table}
 
--- Comments --
+In the category of ensemble algortihms, XGBoost outperforms every other algortihm in all the metrics. F1-score is close to 90\%. Next algortihm is AdaBoost, whose F1-score is above 84\%. The rest of ensemble classifiers are clearly inferior. Regarding cost sensitive algortihm, for this particular dataset it doesn't give any advantage. For hybrid algortihms, which combine ensemble and cost-sensistive algortihms plus undersampling, a beta of 0.55 is chosen. A few of the classifiers improve, as it is the case of Random Forest and AdaCost, while the others become a little bit more. However, XGBoost still has the largest F1-score. 
 
 \subsection{Impact of Imbalance Data on Classification}
 
