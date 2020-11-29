@@ -23,6 +23,8 @@
 %\usepackage{mathpazo}
 \usepackage{fourier} 
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+
 % Enable subfigures
 \graphicspath{ {./pictures/} }
 \usepackage{subcaption}
@@ -128,7 +130,6 @@ where the precision is the ratio between correctly identified minority samples a
 			        \label{fig:Undersampling_2D_OriginalHistograms}
 			\end{figure}
 
-	%\medskip
 	\subsubsection{Generalization Ability}
 		Induction algorithms require a sufficient amount of data to learn a model that generalizes well.  If the training set is not large, a classifier may just memorize the characteristics of the training data. Moreover, undersampling has the potential of eliminating valuable samples from consideration of the classifier entirely \cite{undersampling_generalization}, so it may exacerbate this problem of lack of data. The obtained training set may vary greatly from one undersampling to another, this leads to a high variance of the learned model. Hence, the achievable complexity of the hypothesis set must be reduced to ensure a good generalization.
 		
@@ -213,20 +214,41 @@ We confirm that undersampling shifts the posterior distribution in favor of the 
 	A sensitivity analysis for several ratios has been conducted and the optimum ratio is determined to be around 0.55, which means that the minority class is oversampled until the number of minority samples is the 55\% of the samples of the majority class. The increase in F1 score for this ratio is almost 0.6\%. This can be appreciated in Figure \ref{fig:Oversampling_F1_Score}. 
 	
 	\begin{figure}[h]
-		\includegraphics[scale=0.3]{Oversampling_F1_Score}
+		\includegraphics[scale=0.45]{Oversampling_F1_Score}
 		\centering
 		\caption{F1-score vs. oversampling rate.}
 		\label{fig:Oversampling_F1_Score}
 	\end{figure}
 
 	\subsection{Cost-Sensitive Techniques}
-	Blabla
+	Unlike the data-level based methods seen above, the cost-sensitive learning requires the training algorithm to be modified in order to include uneven penalizations when samples are misclassified. In other words, we are minimizing the risk based on an uneven loss function. Depending on the loss function that we choose, the risk function -- and therefore the estimated distribution parameter -- will impact the decision boundaries of the new cost-sensitive classifier. Although there are multiple loss functions to choose, Weighted Likelihood was chosen for the purposes of this study. This approach consists of weighting the training samples according to their cost of misclassification. The loss function and empirical risk become then:
+	
+	\begin{equation*}
+	\begin{aligned} \label{costWL}
+			L(y,\boldsymbol x, \theta) &= c(y)\mathbbm{1}\{ \hat y \neq y \} \\
+			R^{WL}_{emp}(\theta) &= \int \int L(y,\boldsymbol x, \theta) p(\boldsymbol x, y) d\boldsymbol x \text{ }dy=\\
+				      &=-\frac{1}{N} \sum_n c(y_n,\boldsymbol x_n,) \ln p(y_n | \boldsymbol x_n;\theta)
+		\end{aligned}
+	\end{equation*}
+	
+	where $L$ is the loss function, $R$ is the empirical risk, $c(y)$ is the cost of misclassifying class $y$ and $\theta$ is the set of estimated classifier parameters. With this configuration, the decision rule of the Naive-Bayes classifier yields to:
+	
+	$$ h^{NB}(\boldsymbol x) = \underset{k}{\operatorname{argmax}} \text{ } c(y_k) \pi_k p_{\boldsymbol x | y}(\boldsymbol x|y=k)$$
+	
+	Fig. \ref{fig:CostSensitive} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%. 
+	
+	\begin{figure}[h]
+		\includegraphics[scale=0.45]{pictures/cost-sensitive-dataset1.png}
+		\centering
+		\caption{F1-score vs. cost applied.}
+		\label{fig:CostSensitive}
+	\end{figure}
 
 \section{Classification impact on Real Data}
 Ensemble Classifiers are known to improve the performance of single classifiers in imbalanced datasets \cite{ensembles_review} by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost. 
 
 \subsection{Bagging}
-Baggings algortihms are composed by two parts: bootstrapping and aggregation. The first part consist of selecting a subsample of the dataset. In bagging algorithms, weak learners are not trained over the whole dataset, but only over a part. For this task, decission tree classifiers are employed. Once all the classifiers are trained, the predictions of all models are then aggregated to provide the final prediction. Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
+Baggings algorithms are composed by two parts: bootstrapping and aggregation. The first part consist of selecting a subsample of the dataset. In bagging algorithms, weak learners are not trained over the whole dataset, but only over a part. For this task, decission tree classifiers are employed. Once all the classifiers are trained, the predictions of all models are then aggregated to provide the final prediction. Important to mention that these algorithms are purely 'variance' reducing procedures intended to mitigate instability (especially associated to decision trees). 
 
 \subsection{AdaBoost}
 Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in \cite{schapire} that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms \cite{top10algo}. One its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is fully detailed below.
@@ -332,8 +354,6 @@ One of the practical concerns about AdaBoost is the accuracy/diversity dilemma \
 \end{algorithm}
 
 The main disadvantage of SVM is that the running time to train the model does not scale well with the size of the training set\cite{boosting_svm}. Our training set has more than 30,000 samples so the training would take a significant amount of time. Therefore, a preprocessing step was applied to the training data, whose dimensionality is reduced using PCA and ultimately under-sampled to speed-up the training process. 
-
-[\textcolor{red}{TO-DO}: Add comparison with SVM somehow
 
 \subsection{XGBoost}
 XGBoost is one of the most effective classification algorithms nowadays, and it has been the winner of many competitions in the last years. The working principle is additive tree learning, which means that what it is learned on an iteration is used to train the next tree of the model. This new tree has to minimize the objective function, that includes a training loss and a regularization term. The second order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is going to be optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is the one that it is going to be added. 
