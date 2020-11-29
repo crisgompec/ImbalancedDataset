@@ -146,21 +146,21 @@ where the precision is the ratio between correctly identified minority samples a
 where $p$ and $p'$ denote the posterior probability of encountering a sample from the minority class when employing the original and the undersampled dataset respectively. Whereas $\beta$ denotes the probability of keeping a sample from the majority class.
 
 
-		The posterior is highly affected by the rate of the sampling. As more samples are removed, the classification is more biased towards the minority class. Figure \ref{fig:Undersampling_2D_Contour_Classification} shows the decision region of a naive Bayes classifier. As the training set is undersampled the region of points that are labeled as the minority class grows. The rate of undersampling not only influences the posterior bias, but also the algorithm's ability to generalize. Thus, $\beta$ should be chosen with care. Figure \ref{fig:Undersampling_F1_Score} presents the average F1-score over different training sets. We observe that the score is concave and in this case the optimum occurs with $\beta=0.67$, with a 2\% performance improvement.
+		The posterior is highly affected by the rate of the sampling. As more samples are removed, the classification is more biased towards the minority class. Figure \ref{fig:Undersampling_2D_Contour_Classification} shows the decision region of a naive Bayes classifier, the area within each circle corresponds to the cluster of points classified as the minority class for a given undersampling rate. As the training set is undersampled the region of points that are labeled as the minority class grows. The rate of undersampling not only influences the posterior bias, but also the algorithm's ability to generalize. Thus, $\beta$ should be chosen with care. Figure \ref{fig:F1_Score} presents the average F1-score over different training sets. We observe that the score is concave and in this case the optimum occurs with $\beta=0.67$, with a 2\% performance improvement.
 
 			\begin{figure}[h]
 				\includegraphics[scale=0.45]{Undersampling_2D_Contour_Classification}
 				\centering
-				\caption{Influence of undersampling on the classification region of a naive Bayes classifier trained with the Gaussian dataset. The area within each circle corresponds to the cluster of points that are classified as the minority class for a given undersampling rate.}
+				\caption{Influence of undersampling on the classification region.}
 				\label{fig:Undersampling_2D_Contour_Classification}
 			\end{figure}
 		
-			\begin{figure}[h]
-				\includegraphics[scale=0.45]{Undersampling_F1_Score}
-				\centering
-				\caption{F1-score vs. undersampling rate.}
-				\label{fig:Undersampling_F1_Score}
-			\end{figure}
+		\begin{figure}[h]
+			\includegraphics[scale=0.45]{F1_scores_dataset1}
+			\centering
+			\caption{F1-score vs. undersampling rate, oversampling rate and cost.}
+			\label{fig:F1_Score}
+		\end{figure}
 		
 		Another factor that strongly influences the posterior bias is class separability. The bias is higher when conditional distributions are similar across the classes\cite{undersampling_posterior}. To analyze this behavior we reduced the problem to a one-dimensional setting, the results are depicted in Figure \ref{fig:Undersampling_posterior}. We confirm that undersampling shifts the posterior distribution in favor of the minority class. Nevertheless, the shift caused by $\beta$ is lower under the configuration with lower overlap.
 
@@ -210,14 +210,8 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 		\label{fig:Oversampling_2D_OriginalHistograms}
 	\end{figure}
 	
-	A sensitivity analysis for several ratios has been conducted and the optimum ratio is determined to be around 0.55, which means that the minority class is oversampled until the number of minority samples is the 55\% of the samples of the majority class. The increase in F1 score for this ratio is almost 0.6\%, as shown in Figure \ref{fig:Oversampling_F1_Score}.
-	
-	\begin{figure}[h]
-		\includegraphics[scale=0.45]{Oversampling_F1_Score}
-		\centering
-		\caption{F1-score vs. oversampling rate.}
-		\label{fig:Oversampling_F1_Score}
-	\end{figure}
+	A sensitivity analysis for several ratios has been conducted and the optimum ratio is determined to be around 0.55, which means that the minority class is oversampled until the number of minority samples is the 55\% of the samples of the majority class. The increase in F1 score for this ratio is almost 0.6\%, as shown in Figure \ref{fig:F1_Score}.
+
 
 	\subsection{Cost-Sensitive Techniques}
 	Unlike the data-level based methods seen above, the cost-sensitive learning requires the training algorithm to be modified in order to include uneven penalizations when samples are misclassified. In other words, we are minimizing the risk based on an uneven loss function. Depending on the loss function that we choose, the risk function -- and therefore the estimated distribution parameter -- will impact the decision boundaries of the new cost-sensitive classifier. The loss function selected for this study is Weighted Likelihood (WL). This approach consists of weighting the training samples according to their cost of misclassification. The loss function and empirical risk become
@@ -236,15 +230,8 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 
 \textcolor{red}{Maybe explain what $\pi_k$ stands for.}
 	
-	Fig. \ref{fig:CostSensitive} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%.
+	Fig. \ref{fig:F1_Score} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%.
 	
-	\begin{figure}[h]
-		\includegraphics[scale=0.45]{pictures/cost-sensitive-dataset1.png}
-		\centering
-		\caption{F1-score vs. cost applied.}
-		\label{fig:CostSensitive}
-	\end{figure}
-
 \section{Classification Impact on Real Data}
 The remainder of the paper studies the Twitter dataset. The first attempt was to use the same techniques as in the bi-dimensional dataset. Nevertheless, the presence of categorical variables makes oversampling and custom cost-sensitive approaches unsuitable. Therefore, the first approach relied solely on undersampling and Naive Bayes. It achieved a F1-score of 67.83\% and the undersampling did not improve the performance. The only solution is to use more complex classifiers that can cope with a dataset like this.
 
