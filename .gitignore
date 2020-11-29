@@ -3,6 +3,6 @@
 *.gz
 *.DS_store
 *.pyc
-.synctex.gz 
+*.synctex.gz 
 Dataset2/.ipynb_checkpoints/*
 Dataset1/Python/.ipynb_checkpoints/*
