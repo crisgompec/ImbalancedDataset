@@ -5,6 +5,13 @@ V.~S. {Spelmen} and R.~{Porkodi}, ``A review on handling imbalanced data,'' in
   {\em 2018 International Conference on Current Trends towards Converging
   Technologies (ICCTCT)}, pp.~1--11, 2018.
 
+\bibitem{ensembles_review}
+M.~{Galar}, A.~{Fernandez}, E.~{Barrenechea}, H.~{Bustince}, and F.~{Herrera},
+  ``A review on ensembles for the class imbalance problem: Bagging-, boosting-,
+  and hybrid-based approaches,'' {\em IEEE Transactions on Systems, Man, and
+  Cybernetics, Part C (Applications and Reviews)}, vol.~42, no.~4,
+  pp.~463--484, 2012.
+
 \bibitem{undersampling_generalization}
 M.~{Wasikowski} and X.~{Chen}, ``Combating the small sample class imbalance
   problem using feature selection,'' {\em IEEE Transactions on Knowledge and
@@ -18,12 +25,5 @@ Q.-C. Joaquin, {\em Dataset shift in machine learning}.
 A.~D. {Pozzolo}, O.~{Caelen}, R.~A. {Johnson}, and G.~{Bontempi}, ``Calibrating
   probability with undersampling for unbalanced classification,'' in {\em 2015
   IEEE Symposium Series on Computational Intelligence}, pp.~159--166, 2015.
-
-\bibitem{ensembles_review}
-M.~{Galar}, A.~{Fernandez}, E.~{Barrenechea}, H.~{Bustince}, and F.~{Herrera},
-  ``A review on ensembles for the class imbalance problem: Bagging-, boosting-,
-  and hybrid-based approaches,'' {\em IEEE Transactions on Systems, Man, and
-  Cybernetics, Part C (Applications and Reviews)}, vol.~42, no.~4,
-  pp.~463--484, 2012.
 
 \end{thebibliography}

@@ -3,10 +3,18 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: report.aux
 The style file: ieeetr.bst
 Database file #1: ECE6254_references.bib
-Warning--I didn't find a database entry for "b7"
+Warning--I didn't find a database entry for "schapire"
+Warning--I didn't find a database entry for "top10algo"
+Warning--I didn't find a database entry for "BoostingStats"
+Warning--I didn't find a database entry for "margin_adaboost"
+Warning--I didn't find a database entry for "need_boosting"
+Warning--I didn't find a database entry for "adacost"
+Warning--I didn't find a database entry for "improved_boosting"
+Warning--I didn't find a database entry for "study_boosted_svm"
+Warning--I didn't find a database entry for "boosting_svm"
 You've used 5 entries,
             1876 wiz_defined-function locations,
-            510 strings with 4481 characters,
+            519 strings with 4603 characters,
 and the built_in function-call counts, 1520 in all, are:
 = -- 146
 > -- 51
@@ -45,4 +53,4 @@ warning$ -- 0
 while$ -- 13
 width$ -- 6
 write$ -- 51
-(There was 1 warning)
+(There were 9 warnings)
