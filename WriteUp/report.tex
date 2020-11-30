@@ -21,7 +21,7 @@
 
 % Math font
 %\usepackage{mathpazo}
-%\usepackage{fourier}
+\usepackage{fourier}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
@@ -286,7 +286,7 @@ with $$ W_1(i) = \frac{c_i}{\sum_{i=1}^Nc_i}$$
 and where the new boxed term is called the cost-adjustment function. We use this function to allocate different penalizations across different classes. %This function is left for design since the literature suggest more than one alternatives.
 
 In this project, we used the cost-adjustment function suggested in \cite{ensembles_review}:
-$$\phi(i) = 0.5C_i \left( \mathbbm{1}\{ h_t(\boldsymbol x)=1\} -  \mathbbm{1}\{ h_t(\boldsymbol x)=-1\} \right)+0.5$$, where $C_i$ is a hyper-parameter that establishes the misclassification cost of the sample $i$, which ultimately depends upon the class of that sample. This cost-adjustment function yields to an upper bound cumulative misclassification cost equal to $d\prod_{t=1}^TZ_t$, where $d= \sum c_i$ and $Z_t$ is the sum of the costs calculated for $W_{t+1}$, i.e. the coefficient that we use to normalize the weights in AdaBoost \cite{adacost}. Since boosting minimizes $Z_t$, the significance ultimately needs to be updated in a different way \cite{improved_boosting}:
+$$\phi(i) = 0.5C_i \left( \mathbbm{1}\{ h_t(\boldsymbol x)=1\} -  \mathbbm{1}\{ h_t(\boldsymbol x)=-1\} \right)+0.5$$ where $C_i$ is a hyper-parameter that establishes the misclassification cost of the sample $i$, which ultimately depends upon the class of that sample. This cost-adjustment function yields to an upper bound cumulative misclassification cost equal to $d\prod_{t=1}^TZ_t$, where $d= \sum c_i$ and $Z_t$ is the sum of the costs calculated for $W_{t+1}$, i.e. the coefficient that we use to normalize the weights in AdaBoost \cite{adacost}. Since boosting minimizes $Z_t$, the significance ultimately needs to be updated in a different way \cite{improved_boosting}:
 $$ \alpha = \frac{1}{2}\ln\frac{1+r}{1-r},\quad \text{where } r=\sum_iD(i)u_i, \  u_i=y_i h(x_i)\phi(i)$$.
 
 All in all, the AdaCost algorithm follows the same procedure as AdaBoost with changes in the significance and weight update rule to incorporate an asymmetric penalization cost.
@@ -340,7 +340,7 @@ One of the practical concerns about AdaBoost is the accuracy/diversity dilemma \
 The main disadvantage of SVM is that the running time to train the model does not scale well with the size of the training set\cite{boosting_svm}. Our training set has more than 30,000 samples so the training would take a significant amount of time. Therefore, a preprocessing step was applied to the training data, whose dimensionality is reduced using PCA and ultimately under-sampled to speed-up the training process.
 
 \subsection{XGBoost}
-Nowadays, XGBoost is one of the most effective classification algorithms. In fact, it has been the winner of many competitions in the last years \textcolor{red}{ Include a citation?}. The working principle is additive tree learning, which means that the knowledge acquired on an iteration is used to train the following tree of the model. This new tree has to minimize the objective function that includes a training loss and a regularization term. The second-order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is added. 
+Nowadays, XGBoost is one of the most effective classification algorithms. In fact, it has been the winner of many competitions in the last years \cite{xgboost}. The working principle is additive tree learning, which means that the knowledge acquired on an iteration is used to train the following tree of the model. This new tree has to minimize the objective function that includes a training loss and a regularization term. The second-order Taylor expansion is employed, as the actual function can be very complex. The structure of the new tree is optimized to produce the maximum reduction of the objective function. The tree split that gives the maximum similarity between its prediction and the output is added. 
 
 In practice, XGBoost is the classification algorithm that achieves the highest F1-score and accuracy. The XGBoost library is used to train this algorithm for our dataset.
 
@@ -405,7 +405,6 @@ sampling)& XGBoost  &76.69&87.89&78.49&74.97&83.76 \\
 \hline
 
 \multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}
-
 \multicolumn{4}{l}{$^{\mathrm{*}}$$^{\mathrm{*}}$Metrics are weighted.}
 
 \end{tabular}
@@ -431,7 +430,7 @@ It is really interesting to see that some of the algorithms have a peak in the F
 
 \subsection{Overfitting Analysis}
 
-Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk for increasing algorithm complexity. The true risk was approximated with a validation dataset, whereas the empirical risk was computed with the training set. Complexity increases with the number of learners trained by the algorithm, as it involves a larger number of hypotheses. We conclude that XGBoost is the algorithm that minimizes the true risk. Even with just a few estimators, it is better than any other algorithm. The true risk rapidly decreases as the number of learners grows, up until 50 learners when a risk below 12\% is achieved.
+Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk for increasing algorithm complexity. The true risk and the empirical risk were computed with a validation and training set, respectively. Complexity increases with the number of learners trained by the algorithm, as it involves a larger number of hypotheses. We conclude that XGBoost is the algorithm that minimizes the true risk. Even with just a few estimators, it is better than any other algorithm. The true risk rapidly decreases as the number of learners grows, up until 50 learners when a risk below 12\% is achieved.
 
 \begin{figure}
 	\includegraphics[scale=0.45]{True_empirical_risk_complexity}
@@ -440,7 +439,7 @@ Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empi
 	\label{fig:True_empirical_risk_complexity}
 \end{figure}
 
-Regarding other algorithms, AdaBoost and AdaMEC tend to become more similar as the number of weak learners increases. Although not comparable to XGBoost, both performances are satisfactory. However, AdaMEC seems to outperform AdaBoost. Regarding AdaCost, Bagging and Random Forest, their true risks are comparably high, and their performance does not improve much with the number of learners.
+Regarding other algorithms, AdaBoost and AdaMEC tend to become similar as the number of weak learners increases. Although not comparable to XGBoost, both performances are satisfactory. However, AdaMEC seems to outperform AdaBoost. Regarding AdaCost, Bagging and Random Forest, their true risks are comparably high, and their performance does not improve much with the number of learners.
 
 It is worth noting that the true risk remains stable after a certain number of learners, while the empirical risk always seems to decrease. This is especially visible in XGBoost. This occurs because the algorithm learns patterns that are extremely specific to the training set, but which are not generalizable to the test set. Therefore, very few improvements are seen on the true risk. %In the other algorithms, the different between empiricial and true risk is not as significant, but the true risk always remain higher than the empirical risk.
 
@@ -455,5 +454,77 @@ This paper shows how the classification of imbalanced datasets can be addressed.
 
 \vspace{12pt}
 
-\bibliographystyle{ieeetr} \bibliography{ECE6254_references}
+\begin{thebibliography}{1}
+
+\bibitem{data_imbalance_overview}
+ V.~S. {Spelmen} and R.~{Porkodi}, ``A review on handling imbalanced data,'' in
+   {\em 2018 International Conference on Current Trends towards Converging
+   Technologies (ICCTCT)}, pp.~1--11, 2018.
+
+ \bibitem{undersampling_generalization}
+ M.~{Wasikowski} and X.~{Chen}, ``Combating the small sample class imbalance
+   problem using feature selection,'' {\em IEEE Transactions on Knowledge and
+   Data Engineering}, vol.~22, no.~10, pp.~1388--1400, 2010.
+
+ \bibitem{sampling_bias}
+ Q.-C. Joaquin, {\em Dataset shift in machine learning}.
+ \newblock MIT, 2009.
+
+ \bibitem{undersampling_posterior}
+ A.~D. {Pozzolo}, O.~{Caelen}, R.~A. {Johnson}, and G.~{Bontempi}, ``Calibrating
+   probability with undersampling for unbalanced classification,'' in {\em 2015
+   IEEE Symposium Series on Computational Intelligence}, pp.~159--166, 2015.
+
+ \bibitem{ensembles_review}
+ M.~{Galar}, A.~{Fernandez}, E.~{Barrenechea}, H.~{Bustince}, and F.~{Herrera},
+   ``A review on ensembles for the class imbalance problem: Bagging-, boosting-,
+   and hybrid-based approaches,'' {\em IEEE Transactions on Systems, Man, and
+   Cybernetics, Part C (Applications and Reviews)}, vol.~42, no.~4,
+   pp.~463--484, 2012.
+   
+ \bibitem{improved_boosting}
+ Schapire, Robert E. and Yoram Singer, "Improved boosting algorithms using confidence-rated predictions,", Springer Netherlands, 1999.
+ 
+\bibitem{adacost}
+  Fan, Wei and Stolfo, Salvatore and Zhang, Junxin and Chan, Philip,
+  "AdaCost: Misclassification Cost-sensitive Boosting,"
+  {\em Proceedings of the Sixteenth International Conference on Machine Learning (ICML'99)}
+  
+\bibitem{boosting_svm}
+   Elkin Garc{\'{\i}}a and Fernando Lozano,
+   "Machine Learning and Data Mining in Pattern Recognition,"
+   {\em 5th International Conference, {MLDM} 2007}, Leipzig, Germany, July 18-20, 2007, Post Proceedings
+   
+\bibitem{study_boosted_svm}
+    {Xuchun Li} and {Lei Wang} and E. {Sung},
+    "A study of AdaBoost with SVM based weak learners,"
+    {\em Proceedings. 2005 IEEE International Joint Conference on Neural Networks}, 2005.
+    
+\bibitem{need_boosting}
+Nikolaou, Nikos and Edakunni, Narayanan and Kull, Meelis and Flach, Peter and Brown, Gavin, 
+"Cost-sensitive boosting algorithms: Do we really need them?," Vol. 104, 2016.
+
+
+\bibitem{margin_adaboost}
+Rudin, Cynthia and Daubechies, Ingrid and Schapire, Robert,
+ "The Dynamics of AdaBoost: Cyclic Behavior and Convergence of Margins,"
+ {\em Journal of Machine Learning Research}, 2004.
+ 
+\bibitem{top10algo}
+Wu, Xindong and Kumar, Vipin and Quinlan, Ross and Ghosh, Joydeep and Yang, Qiang and Motoda, Hiroshi and Mclachlan, G. and Ng, Shu Kay Angus and Liu, Bing and Yu, Philip and Zhou, Zhi-Hua and Steinbach, Michael and Hand, David and Steinberg, Dan,
+"Top 10 algorithms in data mining," {\em {Knowledge and Information Systems}}, Vol. 14, 2007.
+
+\bibitem{schapire}
+Schapire, Robert E.,
+"The Strength of Weak Learnability," Vol. 5, 1990. 
+
+\bibitem{xgboost}
+T. {Chen} and C.~{Guestrin}, ``XGBoost: A Scalable Tree Boosting System,'' in
+{\em Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, pp.~785--794, 2016.
+   
+\end{thebibliography}
+
+%\bibliographystyle{ieeetr} 
+%\bibliography{ref2.bib}
+%\bibliography{ECE6254_references.bib}
 \end{document}
