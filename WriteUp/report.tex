@@ -21,7 +21,7 @@
 
 % Math font
 %\usepackage{mathpazo}
-%\usepackage{fourier}
+\usepackage{fourier}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
@@ -406,8 +406,7 @@ sampling)& XGBoost  &76.69&87.89&78.49&74.97&83.76 \\
 & AdaMEC &70.97&84.62&71.19&70.75&80.19  \\
 \hline
 
-\multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}
-
+\multicolumn{4}{l}{$^{\mathrm{*}}$Custom implementation.}\\
 \multicolumn{4}{l}{$^{\mathrm{*}}$$^{\mathrm{*}}$Metrics are weighted.}
 
 \end{tabular}
@@ -458,5 +457,73 @@ This paper shows how classification on imbalanced datasets can be addressed. The
 
 \vspace{12pt}
 
-\bibliographystyle{ieeetr} \bibliography{ECE6254_references}
+\begin{thebibliography}{1}
+
+\bibitem{data_imbalance_overview}
+ V.~S. {Spelmen} and R.~{Porkodi}, ``A review on handling imbalanced data,'' in
+   {\em 2018 International Conference on Current Trends towards Converging
+   Technologies (ICCTCT)}, pp.~1--11, 2018.
+
+ \bibitem{undersampling_generalization}
+ M.~{Wasikowski} and X.~{Chen}, ``Combating the small sample class imbalance
+   problem using feature selection,'' {\em IEEE Transactions on Knowledge and
+   Data Engineering}, vol.~22, no.~10, pp.~1388--1400, 2010.
+
+ \bibitem{sampling_bias}
+ Q.-C. Joaquin, {\em Dataset shift in machine learning}.
+ \newblock MIT, 2009.
+
+ \bibitem{undersampling_posterior}
+ A.~D. {Pozzolo}, O.~{Caelen}, R.~A. {Johnson}, and G.~{Bontempi}, ``Calibrating
+   probability with undersampling for unbalanced classification,'' in {\em 2015
+   IEEE Symposium Series on Computational Intelligence}, pp.~159--166, 2015.
+
+ \bibitem{ensembles_review}
+ M.~{Galar}, A.~{Fernandez}, E.~{Barrenechea}, H.~{Bustince}, and F.~{Herrera},
+   ``A review on ensembles for the class imbalance problem: Bagging-, boosting-,
+   and hybrid-based approaches,'' {\em IEEE Transactions on Systems, Man, and
+   Cybernetics, Part C (Applications and Reviews)}, vol.~42, no.~4,
+   pp.~463--484, 2012.
+   
+ \bibitem{improved_boosting}
+ Schapire, Robert E. and Yoram Singer, "Improved boosting algorithms using confidence-rated predictions,", Springer Netherlands, 1999.
+ 
+\bibitem{adacost}
+  Fan, Wei and Stolfo, Salvatore and Zhang, Junxin and Chan, Philip,
+  "AdaCost: Misclassification Cost-sensitive Boosting,"
+  {\em Proceedings of the Sixteenth International Conference on Machine Learning (ICML'99)}
+  
+\bibitem{boosting_svm}
+   Elkin Garc{\'{\i}}a and Fernando Lozano,
+   "Machine Learning and Data Mining in Pattern Recognition,"
+   {\em 5th International Conference, {MLDM} 2007}, Leipzig, Germany, July 18-20, 2007, Post Proceedings
+   
+\bibitem{study_boosted_svm}
+    {Xuchun Li} and {Lei Wang} and E. {Sung},
+    "A study of AdaBoost with SVM based weak learners,"
+    {\em Proceedings. 2005 IEEE International Joint Conference on Neural Networks}, 2005.
+    
+\bibitem{need_boosting}
+Nikolaou, Nikos and Edakunni, Narayanan and Kull, Meelis and Flach, Peter and Brown, Gavin, 
+"Cost-sensitive boosting algorithms: Do we really need them?," Vol. 104, 2016.
+
+
+\bibitem{margin_adaboost}
+Rudin, Cynthia and Daubechies, Ingrid and Schapire, Robert,
+ "The Dynamics of AdaBoost: Cyclic Behavior and Convergence of Margins,"
+ {\em Journal of Machine Learning Research}, 2004.
+ 
+\bibitem{top10algo}
+Wu, Xindong and Kumar, Vipin and Quinlan, Ross and Ghosh, Joydeep and Yang, Qiang and Motoda, Hiroshi and Mclachlan, G. and Ng, Shu Kay Angus and Liu, Bing and Yu, Philip and Zhou, Zhi-Hua and Steinbach, Michael and Hand, David and Steinberg, Dan,
+"Top 10 algorithms in data mining," {\em {Knowledge and Information Systems}}, Vol. 14, 2007.
+
+\bibitem{schapire}
+Schapire, Robert E.,
+"The Strength of Weak Learnability," Vol. 5, 1990. 
+   
+\end{thebibliography}
+
+%\bibliographystyle{ieeetr} 
+%\bibliography{ref2.bib}
+%\bibliography{ECE6254_references.bib}
 \end{document}
