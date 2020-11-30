@@ -257,7 +257,7 @@ class AdaCost:
 
 """ Custom BoostingSVM Classifier implementation"""
 class BoostingSVM:
-    def __init__(self, x=None,y=None, sigma_ini = 50, sigma_min = 10, sigma_step = 0.5):
+    def __init__(self, n_estimators = 100, x=None,y=None, sigma_ini = 50, sigma_min = 10, sigma_step = 0.5):
         """
         This is a custom implementation of the Boosting SVM algorithm. It is based 
         on the combination of Adaboost and RFB SVM weak learners. To create the model,
@@ -270,6 +270,7 @@ class BoostingSVM:
         self.sigma_ini = sigma_ini
         self.sigma_step = sigma_step
         self.sigma_min = sigma_min
+        self.number_iterations = n_estimators
     
     def fit(self,X_train,y_train):
         sigma = self.sigma_ini 
@@ -290,8 +291,10 @@ class BoostingSVM:
         
         self.error_vec = []
         
+        iteration = 0
+        
         #for iterations in range(self.number_iterations):
-        while sigma > self.sigma_min:
+        while sigma > self.sigma_min and iteration < self.number_iterations:
             print('Sigma: %.1f' % sigma)
             #print('BoostSVM iteration: %d' % (iterations))
             current_weights = weights
@@ -326,6 +329,8 @@ class BoostingSVM:
 
                 # Normalize weights
                 weights /= weights.sum()
+                
+            iteration = iteration + 1
         
     def predict(self,X_test):
         X_test_pca = self.pca.fit_transform(X_test)
