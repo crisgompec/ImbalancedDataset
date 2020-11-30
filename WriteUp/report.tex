@@ -34,7 +34,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Imbalanced Dataset Techniques to Improve Classification of Uneven Class Distributions\\
+\title{Imbalanced Dataset Techniques to Improve the Classification of Uneven Class Distributions\\
 }
 
 \author{\IEEEauthorblockN{Miguel Jiménez Aparicio}
@@ -71,7 +71,7 @@ imbalance, undersampling, oversampling, boosting, bagging, cost-sensitive.
 
 	The overall goal of our project is to provide an overview of the state-of-the-art approaches to solve the issues introduced by imbalanced datasets. Including, a performance comparison of the various techniques. We also aim to implement an efficient scheme that can deal with highly complex and imbalanced datasets.
 
-This study covers the impact of resampling and cost-weighting techniques to improve the classification. The work on \cite{ensembles_review}, suggests that when combining these techniques with ensemble methods the performance of the classification is highly improved. Hence, we also covered the combination of upsampling and downsampling with ensemble learning algorithms such as bagging and boosting. These algorithms have been implemented from scratch, facilitating the embedding of cost-sensitive frameworks as well in the ensemble learning process.
+This study covers the impact of resampling and cost-weighting techniques to improve the classification. The work on \cite{ensembles_review}, suggests that the performance of the classification is highly improved when combining these techniques with ensemble methods. Hence, we also covered the combination of upsampling and downsampling with ensemble learning algorithms such as bagging and boosting. These algorithms have been implemented from scratch, facilitating the embedding of cost-sensitive frameworks as well in the ensemble learning process.
 
 	\subsection{Methodology}
 	Firstly, we study a synthetic dataset characterized by its simplicity. It is made up of two classes following $N(\boldsymbol\mu_0, \Sigma_0)$ and $N(\boldsymbol\mu_1, \Sigma_1))$, where
@@ -186,7 +186,7 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 
 	\subsection{Oversampling}
 	
-	Another technique to balance datasets is oversampling, that is, artificially creating new instances of the minority class. This can be done just by cloning existing samples, but this is not really adding new information to the model. More elaborated methods create samples by interpolation. The most widely used is the Synthetic Minority Oversampling Technique (SMOTE). It works by selecting a random sample, taking another nearby sample and creating points in between. This procedure is repeated multiple times until the desired amount of new samples is created.
+	Another technique to balance datasets is oversampling, that is, artificially creating new instances of the minority class. This can be done simply by cloning existing samples, but it is not adding new information to the model. More elaborated methods create samples by interpolation. The most widely used is the Synthetic Minority Oversampling Technique (SMOTE). It works by selecting a random sample, taking another nearby sample and creating points in between. This procedure is repeated multiple times until the desired amount of new samples is created.
 	
 	In Figure \ref{fig:Oversampling_2D_OriginalHistograms}, it is possible to observe the effect of oversampling on the 2D dataset. For the chosen ratio of 1, the number of samples of both classes is the same.
 	
@@ -224,22 +224,22 @@ where $p$ and $p'$ denote the posterior probability of encountering a sample fro
 		\end{aligned},
 	\end{equation*}
 	
-	where $L$ is the loss function, $R$ is the empirical risk, $c(y)$ is the cost of misclassifying class $y$, $\pi_k$ are the prior probabilities of each class and $\theta$ is the set of estimated classifier parameters. With this configuration, the decision rule of the Naive-Bayes classifier is
+	where $L$ is the loss function, $R$ is the empirical risk, $c(y)$ is the cost of misclassifying class $y$, $\pi_k$ is the prior probability associated to class $k$ and $\theta$ is the set of estimated classifier parameters. With this configuration, the decision rule of the Naive-Bayes classifier is
 	
 	$$ h^{NB}(\boldsymbol x) = \underset{k}{\operatorname{argmax}} \text{ } c(y_k) \pi_k p_{\boldsymbol x | y}(\boldsymbol x|y=k)$$
 	
 	Fig. \ref{fig:F1_Score} shows the results when different costs are applied to the Naive-Bayes classification. Note that this technique is especially effective when the penalization of the majority class is higher, leading to a F1-score improvement with respect to the symmetric loss function of 2\%.
 	
 \section{Classification Impact on Real Data}
-The remainder of the paper studies the Twitter dataset. The first attempt was to use the same techniques as in the bi-dimensional dataset. Nevertheless, the presence of categorical variables makes oversampling and custom cost-sensitive approaches less suitable. Therefore, the first approach relied solely on undersampling and Naive Bayes. The Naive Bayes classifier achieved a F1-score of 29.73\% and including undersampling only improved the performance up to 41.98\%. The only solution is to use more complex classifiers that can cope with a dataset like this.
+The rest of the paper studies the Twitter dataset. The first attempt was to use the same techniques as in the bi-dimensional dataset. Nevertheless, the presence of categorical variables makes oversampling and custom cost-sensitive approaches less suitable. Therefore, the first approach relied solely on undersampling and Naive Bayes. The Naive Bayes classifier achieved a F1-score of 29.73\% and including undersampling only improved the performance up to 41.98\%. The only solution is to use more advanced classifiers that can cope with such complex dataset.
 
 Ensemble Classifiers are known to improve the performance of single classifiers in imbalanced datasets \cite{ensembles_review} by combining separate weak learners into a composite whole. Both bagging and boosting algorithms have been implemented from scratch to explore their advantages and compare them with highly-effective classifiers such as XGBoost.
 
 \subsection{Bagging}
-Bagging algorithms are composed of two parts: bootstrapping and aggregation. The first part consists of selecting a subsample of the dataset. In bagging algorithms, weak learners are only trained over a fraction of the dataset. For training, decision tree classifiers are employed. Once all the classifiers are trained, the predictions of all the models are aggregated to provide the final prediction. Note that these algorithms are purely variance reducing procedures intended to mitigate instability, especially the one associated with decision trees.
+Bagging algorithms are composed of two parts: bootstrapping and aggregation. The first part consists of selecting a subsample of the dataset. In bagging algorithms, weak learners are only trained over a fraction of the dataset. For training, support vector machines are employed. Once all the classifiers are trained, the predictions of all the models are aggregated to provide the final prediction. Note that these algorithms are purely variance reducing procedures intended to mitigate instability, especially the one associated with decision trees.
 
 \subsection{AdaBoost}
-Unlike bagging, boosting fits the weak learners in an adaptive way: A different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in \cite{schapire} that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms \cite{top10algo}. One of its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM.
+Unlike bagging, boosting fits the weak learners in an adaptive way: a different significance is assigned to each of the base learners based on the samples that were misclassified in the previous iteration. It was first introduced by Schapire in 1990, who proved in \cite{schapire} that a weak learner can be turned into a strong learner in the sense of probably approximately correct (PAC) learning framework. In particular, the AdaBoost algorithm stands out in the field of ensemble learning as one of the top ten data mining algorithms \cite{top10algo}. One of its main advantages is the versatility to incorporate cost-sensitive techniques. We implemented a custom AdaBoost classifier that enables us to gain control over the algorithm at a lower level, make adjustments when necessary and create other Adaboost-based classifiers such as AdaCost or Boosted SVM. The algorithm is shown below.
 
 \begin{algorithm}
   \KwInput{Training set $D = \{x_i, y_i\}, i=1,\dots,N;$ and $y_i \in \{ -1,+1\}$; $T:$ Number of iterations; $I:$ Weak learner}
@@ -275,12 +275,12 @@ Unlike bagging, boosting fits the weak learners in an adaptive way: A different 
 \end{algorithm}
 
 % Maybe we need to delete or reduce this paragraph
-This custom implementation uses single decision trees with 2 leaf nodes. It takes the number of maximum iterations, namely the weak learners that will be fitted, and a dataset $D$ formed by N training samples, each constituted by a feature vector $\boldsymbol{x}_i$ and an associated binary label $y_i$. For each iteration, a weak classifier is created using the weighted training samples. In the first iteration, we allocate the same weight to all the samples, i.e. $1/N$. Once the decision tree has been created, we predict the class of the training samples and compute the weighted misclassification error $\epsilon_t$. Then, the significance $\alpha_t$ is calculated based on that error. Finally, the weights of each training sample are updated according to its significance and whether the sample was correctly classified or not. Note that the weights are increased by $e^{\alpha}$ if the sample is misclassified or decreased by $e^{-\alpha}$ if correctly classified, with  $\alpha_t \in [0,1]$ because $\epsilon_t \in [0,0.5]$.
+This custom implementation uses single decision trees with 2 leaf nodes. It takes the number of maximum iterations, namely the number weak learners that will be fitted, and a dataset $D$ formed by N training samples, each constituted by a feature vector $\boldsymbol{x}_i$ and an associated binary label $y_i$. For each iteration, a weak classifier is created using the weighted training samples. In the first iteration, we allocate the same weight to all the samples, i.e. $1/N$. Once the decision tree has been created, we predict the class of the training samples and compute the weighted misclassification error $\epsilon_t$. Then, the significance $\alpha_t$ is calculated based on that error. Finally, the weights of each training sample are updated according to its significance and whether the sample was correctly classified or not. Note that the weights are increased by $e^{\alpha}$ if the sample is misclassified or decreased by $e^{-\alpha}$ if correctly classified, with  $\alpha_t \in [0,1]$ because $\epsilon_t \in [0,0.5]$.
 
-AdaBoost uses all training samples to create each weak learner serially --in contrast to \textit{Bagging}, where \textit{bootstrap aggregating} is used to construct ensembles-- giving more focus to challenging instances and to turning the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibility of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason why weak learners with a low variance but high bias --such as decision trees-- are well adapted for boosting. Lastly, the literature suggests that AdaBoost algorithms are generally resistant to overfitting regardless of the number of weak estimators employed. In fact, there are very few cases reported overfitting the training data \cite{BoostingStats}. This fascinating property is explained by 1) as the iterations proceed the weak learners tend to have less significance and 2) similarly to SVM, ensemble classifiers maximize the margin which allows promoting good generalization \cite{margin_adaboost}. The results section will further cover the impact of complexity on overfitting.
+In contrast to Bagging, AdaBoost uses all training samples to create each weak learner serially, giving more focus to challenging instances to turn the incorrect classifications into good predictions in the next iteration. Hence, AdaBoost can be considered as a "bias" reducing procedure, intended to increase the flexibility of stable (highly biased) weak learners when incorporated properly in a serial additive expansion. That is the reason why weak learners with a low variance but high bias --such as decision trees-- are well adapted for boosting. Lastly, the literature suggests that AdaBoost algorithms are generally resistant to overfitting regardless of the number of weak estimators employed. In fact, there are very few cases that reported overfitting in the training data \cite{BoostingStats}. This fascinating property is explained by 1) as we move onto the next iteration, the weak learners tend to have less significance and 2) similarly to SVM, ensemble classifiers maximize the margin which allows promoting a good generalization \cite{margin_adaboost}. The results section will further cover the impact of complexity on overfitting.
 
 \subsection{AdaCost}
-The AdaBoost algorithm is accuracy-oriented. In other words, it assumes each class has an even distribution. Therefore, in cases where the class distribution is uneven, the algorithm may incur systematic biases toward the majority class. Literature suggests two lines of work to incorporate an asymmetric weight update and eliminate these biases: \cite{need_boosting} 1) modify the model learned from data or 2) modifying how the model is used to make a decision. AdaCost falls into the former category, it aims at modifying the update of the weights based on a slight modification:
+The AdaBoost algorithm is accuracy-oriented. In other words, it assumes each class has an even distribution. Therefore, in cases where the class distribution is uneven, the algorithm may incur systematic biases toward the majority class. Literature suggests two lines of work to incorporate an asymmetric weight update and eliminate these biases \cite{need_boosting}: 1) modify the model learned from data or 2) modifying how the model is used to make a decision. AdaCost falls into the former category, and it aims at modifying the update of the weights based on a slight modification:
 $$ W_{t+1}(i) = W_t(i) \exp \left(-\alpha_t y_i h_t(x_i) \boxed{\phi(i)} \text{ } \right),$$
 with $$ W_1(i) = \frac{c_i}{\sum_{i=1}^Nc_i}$$
 and where the new boxed term is called the cost-adjustment function. We use this function to allocate different penalizations across different classes. %This function is left for design since the literature suggest more than one alternatives.
@@ -292,7 +292,7 @@ $$ \alpha = \frac{1}{2}\ln\frac{1+r}{1-r},\quad \text{where } r=\sum_iD(i)u_i, \
 All in all, the AdaCost algorithm follows the same procedure as AdaBoost with changes in the significance and weight update rule to incorporate an asymmetric penalization cost.
 
 \subsection{AdaMEC}
-The AdaMEC algorithm falls into the second category introduced in the previous part. The model is trained with the original AdaBoost, but modifies the decision rule by exploiting the Bayesian decision theory:
+The AdaMEC algorithm falls into the second category introduced in the previous section. The model is trained with the original AdaBoost, but modifies the decision rule by exploiting the Bayesian decision theory:
 $$ H_{AdaMEC}(\boldsymbol x) = sign \left( \sum_{y \in \{-1,+1\}} c(y) \sum_{\tau: h_{\tau}(\boldsymbol x)=y} \alpha_{\tau} h_{\tau}(\boldsymbol x)\right)$$
 
 This is called the Minimum Expected Cost rule and it assumes that the weighted votes of each weak learner are proportional to the class probabilities. We have incorporated this classifier in this study because it has been reported as one of the best cost-sensitive AdaBoost classifiers \cite{need_boosting}.
@@ -395,10 +395,10 @@ Sensitive& AdaMEC &70.99&85.88&78.21&64.99&79.21  \\
 Hybrid & R. Forest &60.82&80.83&66.54&56.01&72.91  \\
 \cline{2-7}
 
-sampling)& XGBoost  &76.69&87.89&78.49&74.97&83.76 \\
+(under-& XGBoost  &76.69&87.89&78.49&74.97&83.76 \\
 \cline{2-7}
 
- & AdaCost$^*$ &57.51&79.29&63.24&52.72&70.82  \\
+sampling) & AdaCost$^*$ &57.51&79.29&63.24&52.72&70.82  \\
 \cline{2-7}
 
 & AdaMEC &70.97&84.62&71.19&70.75&80.19  \\
@@ -425,12 +425,12 @@ This section studies how each algorithm works if fewer samples of the majority c
 \label{Fig:ImbalanceComparison}
 \end{figure}
 
-It is really interesting to see that some of the algorithms have a peak in the F1-score metric when rates around 0.6 are considered. Random Forest has a strong peak on 0.52 that supports why in the previous section this algorithm improves a 30\% in its F1-score when the undersampling is included. Bagging has the same effect, increasing around a 10\% when the optimum undersampling is applied.  
+It is interesting to note that some of the algorithms have a peak in the F1-score metric when rates around 0.6 are considered. Random Forest has a strong peak on 0.52 that supports why in the previous section this algorithm improves a 30\% in its F1-score when the undersampling is included. Bagging has the same effect, increasing around a 10\% when the optimum undersampling is applied.  
 
 
 \subsection{Overfitting Analysis}
 
-Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk for increasing algorithm complexity. The true risk and the empirical risk were computed with a validation and training set, respectively. Complexity increases with the number of learners trained by the algorithm, as it involves a larger number of hypotheses. We conclude that XGBoost is the algorithm that minimizes the true risk. Even with just a few estimators, it is better than any other algorithm. The true risk rapidly decreases as the number of learners grows, up until 50 learners when a risk below 12\% is achieved.
+Figure \ref{fig:True_empirical_risk_complexity} shows the evolution of both empirical and true risk for increasing algorithm complexity. The true risk and the empirical risk were computed with a validation and training set, respectively. Complexity increases with the number of learners trained by the algorithm, as it involves a larger number of hypotheses. XGBoost is the algorithm that minimizes the most the true risk. Even with just a few estimators, it is better than any other algorithm. The true risk rapidly decreases as the number of learners grows, up until 50 learners when a risk below 12\% is achieved.
 
 \begin{figure}
 	\includegraphics[scale=0.45]{True_empirical_risk_complexity}
@@ -450,7 +450,7 @@ It is worth noting that the true risk remains stable after a certain number of l
 
 \section{Conclusions}
 This paper shows how the classification of imbalanced datasets can be addressed. Some methods that change the dataset on a data level, such as oversampling or undersampling, while others develop more complex classifiers (cost-sensitive and ensemble methods). In the synthetic Gaussian dataset, the first type of methods was employed with satisfactory results and the F1-score is higher. However, applying the same methods to the Twitter dataset did not yield a significant improvement. Consequently, several ensemble and hybrid classifiers have been tested, including some custom implementations. It has been determined that a substantial improvement of almost 30\% on the F1-score can be achieved in relation to a Naive Bayes classifier with undersampling. The ensemble and cost-sensitive classifiers that give the maximum F1-score are the XGBoost and AdaMEC, respectively. Among the ensemble algorithms, it has been shown that boosting algorithms are superior to bagging algorithms%, which are the other type of ensemble algorithms
-. For this particular dataset, some hybrid methods (including undersampling of the majority class) are more effective than the corresponding default ensemble and cost-sensitive methods. This is the case of Bagging and Random Forest. In addition, this paper has also explored the versatility of these algorithms against the number of weak-learners and the rate of imbalance in the dataset. It was determined that XGBoost is the most resilient to imbalance rates and it has the lowest empirical and true in a broad spectrum of weak learners.
+. For this particular dataset, some hybrid methods (including undersampling of the majority class) are more effective than the corresponding default ensemble and cost-sensitive methods. This is the case of Bagging and Random Forest. In addition, this paper has also explored the versatility of these algorithms against the number of weak-learners and the rate of imbalance in the dataset. It was determined that XGBoost is the most resilient to imbalance rates and it has the lowest empirical and true risk in a broad spectrum of weak learners.
 
 \vspace{12pt}
 
